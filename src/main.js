@@ -5,8 +5,11 @@ import {createSortTemplate} from './view/trip-sort.js';
 import {createTripListTemplate} from './view/trip-list.js';
 import {createTripItemListEditTemplate} from './view/trip-item-list-edit.js';
 import {createTripItemListEventsTemplate} from './view/trip-item.js';
+import {generatePoint} from './mock/point-mock';
 
 const TRIP_EVENTS_COUNT = 3;
+
+const events = new Array(TRIP_EVENTS_COUNT).fill().map(generatePoint);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -34,11 +37,8 @@ render(tripEventsElement, createTripListTemplate(), 'beforeend');
 
 const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
 
-render(tripEventsListElement,createTripItemListEditTemplate(),'beforeend');
+render(tripEventsListElement,createTripItemListEditTemplate(events[0]),'beforeend');
 
 for (let i = 0; i < TRIP_EVENTS_COUNT; i++) {
-  render(tripEventsListElement,createTripItemListEventsTemplate(),'beforeend');
+  render(tripEventsListElement,createTripItemListEventsTemplate(events[i]),'beforeend');
 }
-
-import {generatePoint} from './mock/point-mock';
-generatePoint();
