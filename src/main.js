@@ -39,3 +39,6 @@ render(tripEventsListElement,createTripItemListEditTemplate(),'beforeend');
 for (let i = 0; i < TRIP_EVENTS_COUNT; i++) {
   render(tripEventsListElement,createTripItemListEventsTemplate(),'beforeend');
 }
+
+import {generatePoint} from './mock/point-mock';
+generatePoint();
