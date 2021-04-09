@@ -1,30 +1,26 @@
-// import {changeDateFormat} from '../utils.js';
+import {getFormDateFormat } from '../utils.js';
 
 export const createTripItemListEditTemplate = (event) => {
-  const {type, destination, offers} = event;
-  // const travelDate = changeDateFormat(date.travelDate);
+  const {type, destination, offers, dateFrom, dateTo, price} = event;
+
+  const offersContainerClassName = offers.length !== 0 ? '' : ' visually-hidden';
+
+  const travelFromDate = getFormDateFormat(dateFrom);
+  const travelToDate = getFormDateFormat(dateTo);
+
   const createEventOfferSelectors = () => {
     return offers.map((item) => {
       const checked = item.isChecked ? 'checked' : '';
-      return `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${checked}>
-        <label class="event__offer-label" for="event-offer-luggage-1">
-          <span class="event__offer-title">${item.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${item.price}</span>
-        </label>
-    </div>`;
+      return `
+      <div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${checked}>
+          <label class="event__offer-label" for="event-offer-luggage-1">
+            <span class="event__offer-title">${item.title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${item.price}</span>
+          </label>
+      </div>`;
     }).join('');
-  };
-
-  const createNewPrice = () => {
-    let price = 0;
-    offers.forEach((item) => {
-      if(item.isChecked) {
-        price = price + item.price;
-      }
-    });
-    return price;
   };
 
   return `
@@ -109,10 +105,10 @@ export const createTripItemListEditTemplate = (event) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${travelFromDate}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${travelToDate}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -120,14 +116,14 @@ export const createTripItemListEditTemplate = (event) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${createNewPrice()}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
+        <section class="event__section  event__section--offers ${offersContainerClassName}">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">

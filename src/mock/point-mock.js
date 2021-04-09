@@ -1,4 +1,5 @@
-import {getRandomInteger, getRandomArrayElement, getRandomArray} from '../utils';
+import {getRandomInteger, getRandomArrayElement, getRandomArray, getDateFrom,
+  getDateTo} from '../utils';
 
 const generateRouteTypes = () => {
   const ROUTE_TYPES  = [
@@ -91,6 +92,8 @@ const generatePictures = () => {
 };
 
 export const generatePoint = () => {
+  const dateFrom = getDateFrom();
+
   return {
     type: generateRouteTypes(),
     offers: generateOffers(),
@@ -99,7 +102,10 @@ export const generatePoint = () => {
       description: generateDescription().join(' '),
       pictures: generatePictures(),
     },
+    dateFrom: dateFrom,
+    dateTo: getDateTo(dateFrom),
     isFavorite: Boolean(getRandomInteger(0, 1)),
+    price: getRandomInteger(10, 1000),
   };
 };
 

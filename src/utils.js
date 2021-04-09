@@ -1,5 +1,13 @@
 import dayjs from 'dayjs';
 
+const MAX_MONTHS_GAP = 6;
+const MIN_DAYS_GAP = -10;
+const MAX_DAYS_GAP = 7;
+const MIN_DAYSTO_GAP = 1;
+const HOURS_GAP = 24;
+const MIN_MINUTES_GAP = 10;
+const MAX_MINUTES_GAP = 60;
+
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -31,56 +39,104 @@ export const getRandomArray = (array, min, max) => {
 
 // Генерация даты и времени
 
-export const generateDate = () => {
-  const maxDaysGap = 31;
-
-  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
-  const day = dayjs().add(daysGap, 'day').toDate();
-  return dayjs(day);
+export const getDuration = (dateFrom, dateTo) => {
+  const startTime = new Date(dateFrom).getTime();
+  const endTime = new Date(dateTo).getTime();
+  const duration = endTime - startTime;
+  return duration;
 };
 
-export const generateTime = () => {
-  const minute = getRandomInteger(1, 60);
-  const hour = getRandomInteger(1, 24);
-  const item = dayjs().add(minute, 'm').add(hour, 'hour').toDate();
-  return dayjs(item);
-};
+export const humanDurationFormat = (duration) => {
+  let minutes = Math.floor((duration / (1000 * 60)) % 60);
+  let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+  let days = Math.floor((duration / (1000 * 60 * 60 * 24)) % 30);
 
-export const humanTimeFormat = (time) => {
-  return dayjs(time).format('HH:mm');
-};
+  days = (days < 10) ? '0' + days : days;
+  hours = (hours < 10) ? '0' + hours : hours;
+  minutes = (minutes < 10) ? '0' + minutes : minutes;
 
-export const humanDateFormat = (data) => {
-  return dayjs(data).format('D MMMM');
-};
-
-export const changeDateFormat = (date) => {
-  return dayjs(date).format('D/MM/YY');
-};
-
-export const formatMilliseconds = (duration) => {
-  let minutes = parseInt((duration / (1000 * 60)) % 60);
-  let hours = parseInt((duration / (1000 * 60 * 60)) % 24);
-  let days = parseInt((duration / (1000 * 60 * 60 * 24)) % 30);
-
-  days = (days < 10) ? '' + days : days;
-  hours = (hours < 10) ? '' + hours : hours;
-  minutes = (minutes < 10) ? '' + minutes : minutes;
-
-  if (days === '0') {
-    return hours + 'H:' + minutes;
+  if (days !== '00') {
+    return `${days}D ${hours}H ${minutes}M`;
+  } else if (days === '00' && hours !== '00') {
+    return `${hours}H ${minutes}M`;
+  } else {
+    return `${minutes}M`;
   }
-  if (days === '0' && hours === '0') {
-    return minutes;
-  }
-
-  return days + 'D:' + hours + 'H:' + minutes;
 };
 
-export const isEventComing = (event) => {
+export const isEventFrom = (event) => {
   return dayjs().isAfter(event, 'D');
 };
 
-export const isEventExpired = (event) => {
+export const isEventTo = (event) => {
   return dayjs().isBefore(event, 'D');
+};
+
+export const getPointDateFromToFormat = (dateFrom, dateTo) => {
+  dateFrom = new Date(dateFrom).getDate();
+  dateTo = new Date(dateTo).getDate();
+
+  if (dateTo - dateFrom >= 1) {
+    return 'MM/D HH:mm';
+  } else {
+    return 'HH:mm';
+  }
+};
+
+export const getDateFrom = () => {
+  const dateFrom = dayjs()
+    .add(getRandomInteger(0, MAX_MONTHS_GAP), 'M')
+    .add(getRandomInteger(MIN_DAYS_GAP, MAX_DAYS_GAP), 'd')
+    .add(getRandomInteger(0, HOURS_GAP), 'h')
+    .add(getRandomInteger(0, MAX_MINUTES_GAP), 'm')
+    .format('YYYY-MM-DDTHH:mm');
+
+  return dateFrom;
+};
+
+export const getDateTo = (dateFrom) => {
+  const dateTo = dayjs(dateFrom)
+    .add(getRandomInteger(0, MIN_DAYSTO_GAP), 'd')
+    .add(getRandomInteger(0, HOURS_GAP), 'h')
+    .add(getRandomInteger(MIN_MINUTES_GAP, MAX_MINUTES_GAP), 'm')
+    .format('YYYY-MM-DDTHH:mm');
+
+  return dateTo;
+};
+
+export const getTripDates = (points) => {
+  const firstPoint = points[0];
+  const lastIndex = points.length - 1;
+  const lastPoint = points[lastIndex];
+  const startingMonth = dayjs(firstPoint.dateFrom).month();
+  const endingMonth = dayjs(lastPoint.dateTo).month();
+
+  if (startingMonth === endingMonth) {
+    return `${getEventDateFormat(firstPoint.dateFrom)} &mdash; ${getDayFormat(lastPoint.dateTo)}`;
+  }
+  return `${getEventDateFormat(firstPoint.dateFrom)} &mdash; ${getEventDateFormat(lastPoint.dateTo)}`;
+};
+
+export const getDateFormat = (date) => {
+  return dayjs(date).format('YYYY-MM-DD');
+};
+
+export const getEventDateFormat = (date) => {
+  return dayjs(date).format('MMM DD');
+};
+
+export const getFormDateFormat = (date) => {
+  return dayjs(date).format('YY/MM/DD HH:mm');
+};
+
+export const getDayFormat = (date) => {
+  return dayjs(date).format('DD');
+};
+
+export const isFutureEvent = (point) => {
+  return dayjs(point.dateFrom).isAfter(dayjs(), 'd') || dayjs(point.dateFrom).isSame(dayjs(), 'D');
+};
+
+export const isExpiredEvent = (point) => {
+  return dayjs(point.dateTo).isBefore(dayjs(), 'd');
 };
