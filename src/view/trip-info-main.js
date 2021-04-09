@@ -1,4 +1,12 @@
-export const createInfoMainTemplate = () => {
+const createTotalPrice = (events) => {
+  let price = 0;
+  for (let i = 0; i < events.length; i++) {
+    price = price + events[i].price;
+  }
+  return price;
+};
+
+export const createInfoMainTemplate = (events) => {
   return `
   <section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
@@ -8,7 +16,7 @@ export const createInfoMainTemplate = () => {
     </div>
 
     <p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${createTotalPrice(events)}</span>
     </p>
   </section>
   `;
