@@ -1,6 +1,12 @@
 import {getRandomInteger, getRandomArrayElement, getRandomArray, getDateFrom,
   getDateTo} from '../utils';
 
+let id = 1;
+
+const getId = () => {
+  return id++;
+};
+
 const generateRouteTypes = () => {
   const ROUTE_TYPES  = [
     'Check-in',
@@ -75,7 +81,7 @@ const generateOffers = () => {
 const generatePictures = () => {
   const PICTURES = [
     {
-      src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 9)}`,
+      src: `http://picsum.photos/248/152?r=${getRandomInteger(1, 5)}`,
       alt: 'Фото великолепного заката',
     },
     {
@@ -106,8 +112,6 @@ export const generatePoint = () => {
     dateTo: getDateTo(dateFrom),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     price: getRandomInteger(10, 1000),
+    id: getId(),
   };
 };
-
-// eslint-disable-next-line no-console
-console.log(generatePoint());

@@ -13,8 +13,8 @@ export const createTripItemListEditTemplate = (event) => {
       const checked = item.isChecked ? 'checked' : '';
       return `
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${checked}>
-          <label class="event__offer-label" for="event-offer-luggage-1">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.title}" type="checkbox" name="event-offer-${item.title}" ${checked}>
+          <label class="event__offer-label" for="event-offer-${item.title}">
             <span class="event__offer-title">${item.title}</span>
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${item.price}</span>
@@ -120,7 +120,7 @@ export const createTripItemListEditTemplate = (event) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Cancel</button>
+        <button class="event__reset-btn" type="reset">Delete</button>
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers ${offersContainerClassName}">
