@@ -1,8 +1,7 @@
 import {createElement, createTotalPrice} from '../utils.js';
 
-export const createInfoMainTemplate = (events) => {
-  return `
-  <section class="trip-main__trip-info  trip-info">
+const createInfoMainTemplate = (events) => {
+  return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
 
@@ -12,17 +11,17 @@ export const createInfoMainTemplate = (events) => {
     <p class="trip-info__cost">
       Total: &euro;&nbsp;<span class="trip-info__cost-value">${createTotalPrice(events)}</span>
     </p>
-  </section>
-  `;
+  </section>`;
 };
 
 export default class InfoMain {
-  constructor() {
+  constructor(events) {
     this._element = null;
+    this._events = events;
   }
 
   getTemplate() {
-    return createInfoMainTemplate();
+    return createInfoMainTemplate(this._events);
   }
 
   getElement() {

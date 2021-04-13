@@ -1,7 +1,7 @@
-import {getFormDateFormat} from '../utils.js';
+import {getFormDateFormat, createElement} from '../utils.js';
 
-export const createNewEventTemplate = (event) => {
-  const {dateFrom, dateTo, destination, price} = event;
+const createNewEventTemplate = (event) => {
+  const {destination, dateFrom, dateTo, price} = event;
   const travelFromDate = getFormDateFormat(dateFrom);
   const travelToDate = getFormDateFormat(dateTo);
   const randomCity = Math.random() > 0.5 ? '' : destination.city;
@@ -20,7 +20,7 @@ export const createNewEventTemplate = (event) => {
 
   const createNewDescription = (random) => {
     if (random) {
-      return `    <section class="event__section  event__section--destination">
+      return `<section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">
                     ${destination.description};
@@ -169,3 +169,26 @@ export const createNewEventTemplate = (event) => {
               </form>
             </li>`;
 };
+
+export default class NewEvent {
+  constructor(events) {
+    this._element = null;
+    this._events = events;
+  }
+
+  getTemplate() {
+    return createNewEventTemplate(this._events);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

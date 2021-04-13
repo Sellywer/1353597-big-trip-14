@@ -1,6 +1,6 @@
-import {getFormDateFormat } from '../utils.js';
+import {getFormDateFormat, createElement} from '../utils.js';
 
-export const createTripItemListEditTemplate = (event) => {
+const createTripItemListEditTemplate = (event) => {
   const {type, destination, offers, dateFrom, dateTo, price} = event;
 
   const offersContainerClassName = offers.length !== 0 ? '' : ' visually-hidden';
@@ -11,8 +11,7 @@ export const createTripItemListEditTemplate = (event) => {
   const createEventOfferSelectors = () => {
     return offers.map((item) => {
       const checked = item.isChecked ? 'checked' : '';
-      return `
-      <div class="event__offer-selector">
+      return `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.title}" type="checkbox" name="event-offer-${item.title}" ${checked}>
           <label class="event__offer-label" for="event-offer-${item.title}">
             <span class="event__offer-title">${item.title}</span>
@@ -23,8 +22,7 @@ export const createTripItemListEditTemplate = (event) => {
     }).join('');
   };
 
-  return `
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
@@ -136,6 +134,28 @@ export const createTripItemListEditTemplate = (event) => {
         </section>
       </section>
     </form>
-  </li>
-  `;
+  </li>`;
 };
+
+export default class EditEvent {
+  constructor(event) {
+    this._element = null;
+    this._event = event;
+  }
+
+  getTemplate() {
+    return createTripItemListEditTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
