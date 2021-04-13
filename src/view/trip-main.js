@@ -1,10 +1,4 @@
-const createTotalPrice = (events) => {
-  let price = 0;
-  for (let i = 0; i < events.length; i++) {
-    price = price + events[i].price;
-  }
-  return price;
-};
+import {createElement, createTotalPrice} from '../utils.js';
 
 export const createInfoMainTemplate = (events) => {
   return `
@@ -21,3 +15,26 @@ export const createInfoMainTemplate = (events) => {
   </section>
   `;
 };
+
+export default class InfoMain {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createInfoMainTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
