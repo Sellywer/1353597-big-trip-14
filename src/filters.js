@@ -1,9 +1,10 @@
 import {isFutureEvent, isExpiredEvent} from './utils.js';
 
 const eventToFilterMap = {
-  everything: (events) => events.filter((event) => event.dateFrom).length,
-  future: (events) => events.filter((event) => isFutureEvent(event.dateFrom)).length,
-  past: (events) => events.filter((event) => isExpiredEvent(event.dateFrom)).length,
+  everything: (events) => events.length,
+  future: (events) => events.filter((event) => isFutureEvent(event)).length,
+  past: (events) => events.filter((event) => isExpiredEvent(event)).length,
+
 };
 
 const generateFilter = (events) => {

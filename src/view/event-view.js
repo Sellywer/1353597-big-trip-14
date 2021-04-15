@@ -3,9 +3,10 @@ import {getDateFormat,
   getPointDateFromToFormat,
   getEventDateFormat,
   getDuration,
-  humanDurationFormat} from '../utils.js';
+  humanDurationFormat,
+  createElement} from '../utils.js';
 
-export const createTripItemListEventsTemplate = (event) => {
+const createTripItemListEventsTemplate = (event) => {
   const {type, destination, offers, isFavorite, dateFrom, dateTo, price} = event;
   const favouriteClassName  = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
@@ -22,8 +23,7 @@ export const createTripItemListEventsTemplate = (event) => {
 
   const createNewOffers = () => {
     return offers.map((item) => {
-      return `
-        <li class="event__offer">
+      return `<li class="event__offer">
           <span class="event__offer-title">${item.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${item.price}</span>
@@ -31,8 +31,7 @@ export const createTripItemListEventsTemplate = (event) => {
     }).join('');
   };
 
-  return `
-    <li class="trip-events__item">
+  return `<li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime="${travelFromDate}">${eventFromDate}</time>
         <div class="event__type">
@@ -64,6 +63,28 @@ export const createTripItemListEventsTemplate = (event) => {
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>
-    `;
+    </li>`;
 };
+
+export default class Event {
+  constructor(events) {
+    this._events = events;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripItemListEventsTemplate(this._events);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
