@@ -1,22 +1,17 @@
-import SiteMenuView from './view/navigation';
-import InfoMainView from './view/trip-main';
-import FiltersView from './view/trip-filters.js';
-
-import SortingView from './view/trip-sort';
-
-import TripListView from './view/trip-list';
-import EditEventView from './view/event-edit';
-import EventView from './view/event-item';
-import NewEventView  from './view/event-new';
-import NoEventView from './view/no-event.js';
-
+import SiteMenuView from './view/site-menu-view';
+import InfoMainView from './view/info-main-view';
+import FiltersView from './view/filters-view';
+import SortView from './view/sort-view';
+import TripListView from './view/trip-list-view';
+import EditEventView from './view/edit-event-view';
+import EventView from './view/event-view';
+import NewEventView  from './view/new-event-view';
+import NoEventView from './view/no-event-view.js';
 import {generatePoint} from './mock/point-mock';
-import {generateFilter} from './filters.js';
-
-import {render, RenderPosition} from './utils.js';
+import {generateFilter} from './filters';
+import {render, RenderPosition} from './utils';
 
 const TRIP_EVENTS_COUNT = 15;
-const EMPTY_EVENTS_LIST = 0;
 
 const siteMainElement = document.querySelector('.trip-main');
 const siteHeaderElement = siteMainElement.querySelector('.trip-controls__navigation');
@@ -41,39 +36,78 @@ const renderEvent = (eventListElement, event) => {
 
   eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
     replaceCardToForm();
+    document.addEventListener('keydown', onEscKeyDown);
   });
 
   eventEditComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
     evt.preventDefault();
     replaceFormToCard();
+    document.removeEventListener('keydown', onEscKeyDown);
   });
+
+  eventEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceFormToCard();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
 
   render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
 
-// // Навигация, сортировка, главная информация по стоимости и направлению
+// Навигация, сортировка, главная информация по стоимости и направлению
 render(siteMainElement, new InfoMainView(events).getElement(), RenderPosition.AFTERBEGIN);
-
-render(siteHeaderElement, new SiteMenuView().getElement(), RenderPosition.AFTERBEGIN);
 render(siteFilterElement, new FiltersView(filters).getElement(),  RenderPosition.BEFOREEND);
 
+// render(siteHeaderElement, new SiteMenuView().getElement(), RenderPosition.AFTERBEGIN);
 
-// // trip-list
+// trip-list
 
 render(tripEventsElement, new TripListView().getElement(), RenderPosition.BEFOREEND);
 
 const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
 
-if (events.length === EMPTY_EVENTS_LIST) {
-  render(tripEventsListElement, new NoEventView().getElement(), RenderPosition.AFTERBEGIN);
-}
+// пробуем
+const renderEventsListElement = (pointsContainer, events) => {
 
-if (events.length > EMPTY_EVENTS_LIST) {
-  render(tripEventsElement, new SortingView().getElement(), RenderPosition.AFTERBEGIN);
-  render(tripEventsListElement, new NewEventView(events[0]).getElement(), RenderPosition.BEFOREEND);
-}
+  if (events.length === 0) {
+    render(pointsContainer, new NoEventView().getElement(), RenderPosition.AFTERBEGIN);
+  }
 
-for (let i = 1; i < TRIP_EVENTS_COUNT; i++) {
-  renderEvent(tripEventsListElement, events[i]);
-}
+  if (events.length > 0) {
+    render(pointsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+    render(pointsContainer, new NewEventView(events[0]).getElement(), RenderPosition.BEFOREEND);
+  }
+
+  render(siteHeaderElement, new SiteMenuView().getElement(), RenderPosition.AFTERBEGIN); // готово
+
+  events.forEach((event) => {
+    renderEvent(pointsContainer, event);
+  });
+};
+
+renderEventsListElement(tripEventsListElement, events);
+
+// ниже можно удалить
+
+// if (events.length === EMPTY_EVENTS_LIST) {
+//   render(tripEventsListElement, new NoEventView().getElement(), RenderPosition.AFTERBEGIN);
+// }
+
+// if (events.length > EMPTY_EVENTS_LIST) {
+//   render(tripEventsElement, new SortingView().getElement(), RenderPosition.AFTERBEGIN);
+//   render(tripEventsListElement, new NewEventView(events[0]).getElement(), RenderPosition.BEFOREEND);
+// }
+
+// // for (let i = 1; i < TRIP_EVENTS_COUNT; i++) {
+
+// events.forEach((event) => {
+//   renderEvent(tripEventsListElement, event);
+// });

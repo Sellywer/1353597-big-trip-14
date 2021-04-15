@@ -3,7 +3,8 @@ import {getDateFormat,
   getPointDateFromToFormat,
   getEventDateFormat,
   getDuration,
-  humanDurationFormat, createElement} from '../utils.js';
+  humanDurationFormat,
+  createElement} from '../utils.js';
 
 const createTripItemListEventsTemplate = (event) => {
   const {type, destination, offers, isFavorite, dateFrom, dateTo, price} = event;
