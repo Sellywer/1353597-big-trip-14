@@ -94,20 +94,3 @@ const renderEventsListElement = (pointsContainer, events) => {
 };
 
 renderEventsListElement(tripEventsListElement, events);
-
-// ниже можно удалить
-
-// if (events.length === EMPTY_EVENTS_LIST) {
-//   render(tripEventsListElement, new NoEventView().getElement(), RenderPosition.AFTERBEGIN);
-// }
-
-// if (events.length > EMPTY_EVENTS_LIST) {
-//   render(tripEventsElement, new SortingView().getElement(), RenderPosition.AFTERBEGIN);
-//   render(tripEventsListElement, new NewEventView(events[0]).getElement(), RenderPosition.BEFOREEND);
-// }
-
-// // for (let i = 1; i < TRIP_EVENTS_COUNT; i++) {
-
-// events.forEach((event) => {
-//   renderEvent(tripEventsListElement, event);
-// });
