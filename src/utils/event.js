@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {getRandomInteger} from './common';
 
 const MAX_MONTHS_GAP = 6;
 const MIN_DAYS_GAP = -10;
@@ -7,60 +8,6 @@ const MIN_DAYSTO_GAP = 1;
 const HOURS_GAP = 24;
 const MIN_MINUTES_GAP = 10;
 const MAX_MINUTES_GAP = 60;
-
-export const RenderPosition = {
-  AFTERBEGIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-};
-
-export const render = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-  }
-};
-
-export const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
-export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-export const getRandomArrayElement = (elements) =>  elements[Math.floor(Math.random() * elements.length)];
-
-export const shuffle = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-};
-
-export const getRandomArray = (array, min, max) => {
-
-  shuffle(array);
-
-  const arrayLength = getRandomInteger(min, max);
-
-  const newArray = [];
-  for (let i = 0; i < arrayLength; i++) {
-    newArray.push(array[i]);
-  }
-  return newArray;
-};
-
-// Генерация даты и времени
 
 export const getDuration = (dateFrom, dateTo) => {
   const startTime = new Date(dateFrom).getTime();

@@ -1,4 +1,5 @@
-import {getFormDateFormat, createElement} from '../utils.js';
+import {getFormDateFormat} from '../utils/event.js';
+import AbstractView from './abstract.js';
 
 const createNewEventTemplate = (event) => {
   const {destination, dateFrom, dateTo, price} = event;
@@ -170,25 +171,13 @@ const createNewEventTemplate = (event) => {
             </li>`;
 };
 
-export default class NewEvent {
+export default class NewEvent extends AbstractView {
   constructor(events) {
-    this._element = null;
+    super();
     this._events = events;
   }
 
   getTemplate() {
     return createNewEventTemplate(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

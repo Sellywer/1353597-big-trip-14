@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createNoTaskTemplate = () => {
   return`<p class="trip-events__msg">
@@ -6,26 +6,8 @@ const createNoTaskTemplate = () => {
           </p>`;
 };
 
-class NoEvent {
-  constructor() {
-    this._element = null;
-  }
-
+export default class NoEvent extends AbstractView{
   getTemplate() {
     return createNoTaskTemplate();
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
-
-export default NoEvent;
