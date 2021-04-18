@@ -1,5 +1,8 @@
-import {getRandomInteger, getRandomArrayElement, getRandomArray, getDateFrom,
-  getDateTo} from '../utils';
+import {getRandomInteger,
+  getRandomArrayElement,
+  getRandomArray} from '../utils/common';
+import {getDateFrom,
+  getDateTo} from '../utils/event';
 
 let id = 1;
 

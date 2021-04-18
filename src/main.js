@@ -7,9 +7,13 @@ import EditEventView from './view/edit-event-view';
 import EventView from './view/event-view';
 import NewEventView  from './view/new-event-view';
 import NoEventView from './view/no-event-view.js';
+
 import {generatePoint} from './mock/point-mock';
+
 import {generateFilter} from './filters';
-import {render, RenderPosition} from './utils';
+
+import {render, RenderPosition, replace} from './utils/render';
+
 
 const TRIP_EVENTS_COUNT = 15;
 
@@ -27,25 +31,24 @@ const renderEvent = (eventListElement, event) => {
   const eventEditComponent = new EditEventView(event);
 
   const replaceCardToForm = () => {
-    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
   };
 
   const replaceFormToCard = () => {
-    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventComponent, eventEditComponent);
   };
 
-  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+  eventComponent.setEditClickHandler(() => {
     replaceCardToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  eventEditComponent.setFormSubmitHandler(() => {
     replaceFormToCard();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+  eventEditComponent.setEditClickHandler(() => {
     replaceFormToCard();
     document.removeEventListener('keydown', onEscKeyDown);
   });
@@ -58,19 +61,17 @@ const renderEvent = (eventListElement, event) => {
     }
   };
 
-  render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
 
 
 // Навигация, сортировка, главная информация по стоимости и направлению
-render(siteMainElement, new InfoMainView(events).getElement(), RenderPosition.AFTERBEGIN);
-render(siteFilterElement, new FiltersView(filters).getElement(),  RenderPosition.BEFOREEND);
-
-// render(siteHeaderElement, new SiteMenuView().getElement(), RenderPosition.AFTERBEGIN);
+render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
+render(siteFilterElement, new FiltersView(filters),  RenderPosition.BEFOREEND);
 
 // trip-list
 
-render(tripEventsElement, new TripListView().getElement(), RenderPosition.BEFOREEND);
+render(tripEventsElement, new TripListView(), RenderPosition.BEFOREEND);
 
 const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
 
@@ -78,15 +79,15 @@ const tripEventsListElement = tripEventsElement.querySelector('.trip-events__lis
 const renderEventsListElement = (pointsContainer, events) => {
 
   if (events.length === 0) {
-    render(pointsContainer, new NoEventView().getElement(), RenderPosition.AFTERBEGIN);
+    render(pointsContainer, new NoEventView(), RenderPosition.AFTERBEGIN);
   }
 
   if (events.length > 0) {
-    render(pointsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
-    render(pointsContainer, new NewEventView(events[0]).getElement(), RenderPosition.BEFOREEND);
+    render(pointsContainer, new SortView(), RenderPosition.AFTERBEGIN);
+    render(pointsContainer, new NewEventView(events[0]), RenderPosition.BEFOREEND);
   }
 
-  render(siteHeaderElement, new SiteMenuView().getElement(), RenderPosition.AFTERBEGIN); // готово
+  render(siteHeaderElement, new SiteMenuView(), RenderPosition.AFTERBEGIN); // готово
 
   events.forEach((event) => {
     renderEvent(pointsContainer, event);
