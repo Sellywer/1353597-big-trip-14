@@ -7,7 +7,7 @@ const eventToFilterMap = {
 
 };
 
-const generateFilter = (events) => {
+export const generateFilter = (events) => {
   return Object.entries(eventToFilterMap).map(([filterName, countEvents]) => {
     return {
       name: filterName,
@@ -15,5 +15,3 @@ const generateFilter = (events) => {
     };
   });
 };
-
-export {generateFilter};

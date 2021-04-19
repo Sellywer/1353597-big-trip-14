@@ -64,7 +64,6 @@ const renderEvent = (eventListElement, event) => {
   render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
 
-
 // Навигация, сортировка, главная информация по стоимости и направлению
 render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
 render(siteFilterElement, new FiltersView(filters),  RenderPosition.BEFOREEND);
@@ -75,7 +74,6 @@ render(tripEventsElement, new TripListView(), RenderPosition.BEFOREEND);
 
 const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
 
-// пробуем
 const renderEventsListElement = (pointsContainer, events) => {
 
   if (events.length === 0) {
@@ -87,7 +85,7 @@ const renderEventsListElement = (pointsContainer, events) => {
     render(pointsContainer, new NewEventView(events[0]), RenderPosition.BEFOREEND);
   }
 
-  render(siteHeaderElement, new SiteMenuView(), RenderPosition.AFTERBEGIN); // готово
+  render(siteHeaderElement, new SiteMenuView(), RenderPosition.AFTERBEGIN);
 
   events.forEach((event) => {
     renderEvent(pointsContainer, event);
