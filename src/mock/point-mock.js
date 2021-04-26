@@ -1,14 +1,9 @@
+import {nanoid} from 'nanoid';
 import {getRandomInteger,
   getRandomArrayElement,
   getRandomArray} from '../utils/common';
 import {getDateFrom,
   getDateTo} from '../utils/event';
-
-let id = 1;
-
-const getId = () => {
-  return id++;
-};
 
 const generateRouteTypes = () => {
   const ROUTE_TYPES  = [
@@ -25,6 +20,7 @@ const generateRouteTypes = () => {
   ];
   return getRandomArrayElement(ROUTE_TYPES);
 };
+
 const generateDestinationCities = () => {
   const DESTINATION_CITIES = [
     'Chamonix',
@@ -106,8 +102,8 @@ export const generatePoint = () => {
   return {
     type: generateRouteTypes(),
     offers: generateOffers(),
+    city: generateDestinationCities(),
     destination: {
-      city: generateDestinationCities(),
       description: generateDescription().join(' '),
       pictures: generatePictures(),
     },
@@ -115,6 +111,6 @@ export const generatePoint = () => {
     dateTo: getDateTo(dateFrom),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     price: getRandomInteger(10, 1000),
-    id: getId(),
+    id: nanoid(),
   };
 };

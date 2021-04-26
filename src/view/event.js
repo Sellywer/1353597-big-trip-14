@@ -7,7 +7,7 @@ import {getDateFormat,
 import AbstractView from './abstract.js';
 
 const createTripItemListEventsTemplate = (event) => {
-  const {type, destination, offers, isFavorite, dateFrom, dateTo, price} = event;
+  const {type, offers, isFavorite, dateFrom, dateTo, price, city} = event;
   const favouriteClassName  = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
     : 'event__favorite-btn';
@@ -37,7 +37,7 @@ const createTripItemListEventsTemplate = (event) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
         </div>
-        <h3 class="event__title">${type} ${destination.city}</h3>
+        <h3 class="event__title">${type} ${city}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateFrom}">${humanPointDateFormat(dateFrom)}</time>
@@ -70,12 +70,20 @@ export default class Event extends AbstractView {
   constructor(events) {
     super();
     this._events = events;
+    this._element = null;
 
     this._editClickHandler = this._editClickHandler.bind(this);
+    this._closeClickHandler = this._closeClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
     return createTripItemListEventsTemplate(this._events);
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   }
 
   _editClickHandler(evt) {
@@ -83,8 +91,18 @@ export default class Event extends AbstractView {
     this._callback.editClick();
   }
 
+  _closeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeClick();
+  }
+
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._favoriteClickHandler);
   }
 }
