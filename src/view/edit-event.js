@@ -2,7 +2,7 @@ import {getFormDateFormat} from '../utils/event.js';
 import AbstractView from './abstract.js';
 
 const createTripItemListEditTemplate = (event) => {
-  const {type, destination, offers, dateFrom, dateTo, price} = event;
+  const {type, destination, offers, dateFrom, dateTo, price, city} = event;
 
   const offersContainerClassName = offers.length !== 0 ? '' : ' visually-hidden';
 
@@ -94,7 +94,7 @@ const createTripItemListEditTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -120,7 +120,7 @@ const createTripItemListEditTemplate = (event) => {
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
+        <button class="event__rollup-btn event__rollup-btn--close" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
       </header>
@@ -145,9 +145,10 @@ export default class EditEvent extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
+    this._element = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._editClickHandler = this._editClickHandler.bind(this);
+    this._closeClickHandler  = this._closeClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -156,21 +157,21 @@ export default class EditEvent extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._event);
+  }
+
+  _closeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeClick();
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+    this.getElement().querySelector('.event--edit').addEventListener('submit', this._formSubmitHandler);
   }
 
-  _editClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.editClick();
-  }
-
-  setEditClickHandler(callback) {
-    this._callback.editClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+  setCloseClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.getElement().querySelector('.event__rollup-btn--close').addEventListener('click', this._closeClickHandler);
   }
 }

@@ -2,13 +2,13 @@ import {getFormDateFormat} from '../utils/event.js';
 import AbstractView from './abstract.js';
 
 const createNewEventTemplate = (event) => {
-  const {destination, dateFrom, dateTo, price} = event;
+  const {destination, dateFrom, dateTo, price, city} = event;
   const travelFromDate = getFormDateFormat(dateFrom);
   const travelToDate = getFormDateFormat(dateTo);
-  const randomCity = Math.random() > 0.5 ? '' : destination.city;
+  const randomCity = Math.random() > 0.5 ? '' : city;
   const createNewCity = (random) => {
     if (random) {
-      return destination.city;
+      return city;
     }
     return '';
   };
