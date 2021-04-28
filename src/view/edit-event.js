@@ -155,14 +155,9 @@ export default class EditEvent extends AbstractView {
     return createTripItemListEditTemplate(this._event);
   }
 
-  _formSubmitHandler(evt) {
-    evt.preventDefault();
-    this._callback.formSubmit(this._event);
-  }
-
-  _closeClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.closeClick();
+  setCloseClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.getElement().querySelector('.event__rollup-btn--close').addEventListener('click', this._closeClickHandler);
   }
 
   setFormSubmitHandler(callback) {
@@ -170,8 +165,13 @@ export default class EditEvent extends AbstractView {
     this.getElement().querySelector('.event--edit').addEventListener('submit', this._formSubmitHandler);
   }
 
-  setCloseClickHandler(callback) {
-    this._callback.closeClick = callback;
-    this.getElement().querySelector('.event__rollup-btn--close').addEventListener('click', this._closeClickHandler);
+  _closeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeClick();
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit(this._event);
   }
 }
