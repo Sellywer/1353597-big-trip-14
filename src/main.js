@@ -8,7 +8,7 @@ import {generatePoint} from './mock/point-mock';
 import {generateFilter} from './filters';
 import {render, RenderPosition} from './utils/render';
 
-const TRIP_EVENTS_COUNT = 3;
+const TRIP_EVENTS_COUNT = 4;
 
 const events = new Array(TRIP_EVENTS_COUNT).fill().map(generatePoint);
 const filters = generateFilter(events);

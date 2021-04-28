@@ -81,9 +81,9 @@ export default class Event extends AbstractView {
     return createTripItemListEventsTemplate(this._events);
   }
 
-  _favoriteClickHandler(evt) {
+  _closeClickHandler(evt) {
     evt.preventDefault();
-    this._callback.favoriteClick();
+    this._callback.closeClick();
   }
 
   _editClickHandler(evt) {
@@ -91,9 +91,9 @@ export default class Event extends AbstractView {
     this._callback.editClick();
   }
 
-  _closeClickHandler(evt) {
+  _favoriteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.closeClick();
+    this._callback.favoriteClick();
   }
 
   setEditClickHandler(callback) {

@@ -6,11 +6,9 @@ const createNewEventTemplate = (event) => {
   const travelFromDate = getFormDateFormat(dateFrom);
   const travelToDate = getFormDateFormat(dateTo);
   const randomCity = Math.random() > 0.5 ? '' : city;
+
   const createNewCity = (random) => {
-    if (random) {
-      return city;
-    }
-    return '';
+    return random ? city : '';
   };
 
   const createNewPhotos = () => {

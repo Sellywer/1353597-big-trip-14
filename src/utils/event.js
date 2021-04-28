@@ -116,3 +116,18 @@ export const createTotalPrice = (events) => {
   events.forEach((item) => price += item.price);
   return price;
 };
+
+export const sortByTime = (eventA, eventB) => {
+  const firstDuration = getDuration(eventA.dateFrom, eventA.dateTo);
+  const secondDuration = getDuration(eventB.dateFrom, eventB.dateTo);
+
+  return secondDuration - firstDuration;
+};
+
+export const sortByPrice = (priceA, priceB) => {
+  return priceB.price - priceA.price;
+};
+
+export const sortByDate = (pointA, pointB) => {
+  return dayjs(pointA.dateFrom).diff(pointB.dateTo);
+};
