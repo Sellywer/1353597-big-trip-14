@@ -33,7 +33,7 @@ const generateDestinationCities = () => {
   return getRandomArrayElement(DESTINATION_CITIES);
 };
 
-const generateDescription = () => {
+export const generateDescription = () => {
   const DESCRIPTIONS  = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -47,10 +47,13 @@ const generateDescription = () => {
     'Nunc fermentum tortor ac porta dapibus.',
     'In rutrum ac purus sit amet tempus.',
   ];
-  return getRandomArray(DESCRIPTIONS, 1, 5);
+  return new Array(getRandomInteger(1, 5))
+    .fill()
+    .map(() => DESCRIPTIONS[getRandomInteger(0, DESCRIPTIONS.length - 1)])
+    .join(' ');
 };
 
-const generateOffers = () => {
+export const generateOffers = () => {
   const OFFERS = [
     {
       title: 'Add luggage',
@@ -74,22 +77,29 @@ const generateOffers = () => {
     },
   ];
 
-  return getRandomArray(OFFERS, 0, 5);
+  return Array.from(
+    new Set(
+      new Array(getRandomInteger(0, 5))
+        .fill()
+        .map(() => OFFERS[getRandomInteger(0, OFFERS.length - 1)])
+        .map((item) => JSON.stringify(item)),
+    ),
+  ).map((item) => JSON.parse(item));
 };
 
-const generatePictures = () => {
+export const generatePictures = () => {
   const PICTURES = [
     {
       src: `http://picsum.photos/248/152?r=${getRandomInteger(1, 5)}`,
-      alt: 'Фото великолепного заката',
+      alt: generateDescription(),
     },
     {
       src: `http://picsum.photos/248/152?r=${getRandomInteger(10, 19)}`,
-      alt: 'Фото горы Иремель',
+      alt: generateDescription(),
     },
     {
       src: `http://picsum.photos/248/152?r=${getRandomInteger(20, 29)}`,
-      alt: 'Фото в Диснейлэнде',
+      alt: generateDescription(),
     },
   ];
 
@@ -104,13 +114,14 @@ export const generatePoint = () => {
     offers: generateOffers(),
     city: generateDestinationCities(),
     destination: {
-      description: generateDescription().join(' '),
+      description: generateDescription(),
       pictures: generatePictures(),
     },
     dateFrom: dateFrom,
     dateTo: getDateTo(dateFrom),
     isFavorite: Boolean(getRandomInteger(0, 1)),
-    price: getRandomInteger(10, 1000),
+    basePrice: getRandomInteger(10, 1000),
     id: nanoid(),
   };
 };
+

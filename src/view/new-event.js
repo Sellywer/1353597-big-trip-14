@@ -2,7 +2,7 @@ import {getFormDateFormat} from '../utils/event.js';
 import AbstractView from './abstract.js';
 
 const createNewEventTemplate = (event) => {
-  const {destination, dateFrom, dateTo, price, city} = event;
+  const {destination, dateFrom, dateTo, basePrice, city} = event;
   const travelFromDate = getFormDateFormat(dateFrom);
   const travelToDate = getFormDateFormat(dateTo);
   const randomCity = Math.random() > 0.5 ? '' : city;
@@ -112,7 +112,7 @@ const createNewEventTemplate = (event) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
                   </div>
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
                   <button class="event__reset-btn" type="reset">Cancel</button>
