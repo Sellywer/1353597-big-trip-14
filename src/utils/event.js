@@ -60,7 +60,6 @@ export const getDateFrom = () => {
     .add(getRandomInteger(0, HOURS_GAP), 'h')
     .add(getRandomInteger(0, MAX_MINUTES_GAP), 'm')
     .format('YYYY-MM-DDTHH:mm');
-
   return dateFrom;
 };
 
@@ -113,7 +112,7 @@ export const isExpiredEvent = (point) => {
 
 export const createTotalPrice = (events) => {
   let price = 0;
-  events.forEach((item) => price += item.price);
+  events.forEach((item) => price += item.basePrice);
   return price;
 };
 
@@ -125,7 +124,7 @@ export const sortByTime = (eventA, eventB) => {
 };
 
 export const sortByPrice = (priceA, priceB) => {
-  return priceB.price - priceA.price;
+  return priceB.basePrice - priceA.basePrice;
 };
 
 export const sortByDate = (pointA, pointB) => {
