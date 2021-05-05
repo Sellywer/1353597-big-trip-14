@@ -110,42 +110,6 @@ export const isExpiredEvent = (point) => {
   return dayjs(point.dateTo).isBefore(dayjs(), 'd');
 };
 
-
-export const createEventOfferSelectors = (offers) => {
-  return offers.map((item) => {
-    const checked = item.isChecked ? 'checked' : '';
-    return `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.title}" type="checkbox" name="event-offer-${item.title}" ${checked}>
-        <label class="event__offer-label" for="event-offer-${item.title}">
-          <span class="event__offer-title">${item.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${item.basePrice}</span>
-        </label>
-    </div>`;
-  }).join('');
-};
-
-
-const createPictureMarkup = (pictures) => {
-  return pictures
-    .map((item) => {
-      return `<img class="event__photo" src="${item.src}" alt="${item.description}">`;
-    })
-    .join(' ');
-};
-
-export const createPictureContainerMarkup = (pictures) => {
-  if (pictures.length) {
-    return `<div class="event__photos-container">
-    <div class="event__photos-tape">
-      ${createPictureMarkup(pictures)}
-    </div>
-  </div>`;
-  }
-
-  return '';
-};
-
 export const createTotalPrice = (events) => {
   let price = 0;
   events.forEach((item) => price += item.basePrice);

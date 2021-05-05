@@ -112,10 +112,10 @@ export const generatePoint = () => {
   return {
     type: generateRouteTypes(),
     offers: generateOffers(),
-    city: generateDestinationCities(),
     destination: {
       description: generateDescription(),
       pictures: generatePictures(),
+      city: generateDestinationCities(),
     },
     dateFrom: dateFrom,
     dateTo: getDateTo(dateFrom),

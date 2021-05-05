@@ -7,7 +7,7 @@ import {getDateFormat,
 import AbstractView from './abstract.js';
 
 const createTripItemListEventsTemplate = (event) => {
-  const {type, offers, isFavorite, dateFrom, dateTo, basePrice, city} = event;
+  const {type, offers, isFavorite, dateFrom, dateTo, basePrice, destination} = event;
   const favouriteClassName  = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
     : 'event__favorite-btn';
@@ -26,7 +26,7 @@ const createTripItemListEventsTemplate = (event) => {
       return `<li class="event__offer">
           <span class="event__offer-title">${item.title}</span>
           &plus;&euro;&nbsp;
-          <span class="event__offer-price">${item.basePrice}</span>
+          <span class="event__offer-price">${item.price}</span>
         </li>`;
     }).join('');
   };
@@ -37,7 +37,7 @@ const createTripItemListEventsTemplate = (event) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
         </div>
-        <h3 class="event__title">${type} ${city}</h3>
+        <h3 class="event__title">${type} ${destination.city}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateFrom}">${humanPointDateFormat(dateFrom)}</time>

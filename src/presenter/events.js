@@ -100,14 +100,10 @@ export default class Event {
 
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
-      this._closeFormWithoutSave(evt);
+      evt.preventDefault();
+      this._eventEditComponent.reset(this._event);
+      this._replaceFormToCard();
     }
-  }
-
-  _closeFormWithoutSave(evt) {
-    evt.preventDefault();
-    this._eventEditComponent.reset(this._event);
-    this._replaceFormToCard();
   }
 
   _handleEditClick() {

@@ -1,12 +1,45 @@
-import {getFormDateFormat, createEventOfferSelectors, createPictureContainerMarkup} from '../utils/event';
+import {getFormDateFormat} from '../utils/event';
 import SmartView from './smart-view';
 import {generatePictures, generateOffers, generateDescription} from '../mock/point-mock';
 
 const createEventEditTemplate = (event) => {
-  const {type, destination, offers, dateFrom, dateTo, basePrice, city} = event;
+  const {type, destination, offers, dateFrom, dateTo, basePrice} = event;
 
   const offersContainerClassName = offers.length !== 0 ? '' : ' visually-hidden';
 
+  const createEventOfferSelectors = (offers) => {
+    return offers.map((item) => {
+      const checked = item.isChecked ? 'checked' : '';
+      return `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.title}" type="checkbox" name="event-offer-${item.title}" ${checked}>
+          <label class="event__offer-label" for="event-offer-${item.title}">
+            <span class="event__offer-title">${item.title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${item.price}</span>
+          </label>
+      </div>`;
+    }).join('');
+  };
+
+  const createPictureMarkup = (pictures) => {
+    return pictures
+      .map((item) => {
+        return `<img class="event__photo" src="${item.src}" alt="${item.description}">`;
+      })
+      .join(' ');
+  };
+
+  const createPictureContainerMarkup = (pictures) => {
+    if (pictures.length) {
+      return `<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${createPictureMarkup(pictures)}
+      </div>
+    </div>`;
+    }
+
+    return '';
+  };
   const travelFromDate = getFormDateFormat(dateFrom);
   const travelToDate = getFormDateFormat(dateTo);
 
@@ -81,7 +114,7 @@ const createEventEditTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.city}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -144,34 +177,27 @@ export default class EditEvent extends SmartView  {
     this._setInnerHandlers();
   }
 
-  _priceChangeHandler(evt) {
-    evt.preventDefault();
-    this.updateData({ basePrice: evt.target.value });
-  }
-
-  _destinationChangeHandler(evt) {
-    evt.preventDefault();
-    this.updateData({
-      destination: { name: evt.target.value, description: generateDescription(), pictures: generatePictures() },
-    });
-  }
-
-  _routeTypeChangeHandler(evt) {
-    evt.preventDefault();
-    this.updateData({ type: evt.target.value, offers: generateOffers() });
-  }
-
-  reset(event) {
-    this.updateData(EditEvent.parseEventToData(event));
-  }
-
   getTemplate() {
     return createEventEditTemplate(this._data);
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('.event--edit').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setCloseClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.getElement().querySelector('.event__rollup-btn--close').addEventListener('click', this._closeClickHandler);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  reset(event) {
+    this.updateData(EditEvent.parseEventToData(event));
   }
 
   _setInnerHandlers() {
@@ -182,24 +208,31 @@ export default class EditEvent extends SmartView  {
     this.getElement().querySelector('.event__input--price').addEventListener('change', this._priceChangeHandler);
   }
 
-  setCloseClickHandler(callback) {
-    this._callback.closeClick = callback;
-    this.getElement().querySelector('.event__rollup-btn--close').addEventListener('click', this._closeClickHandler);
-  }
-
-  setFormSubmitHandler(callback) {
-    this._callback.formSubmit = callback;
-    this.getElement().querySelector('.event--edit').addEventListener('submit', this._formSubmitHandler);
-  }
-
-  _closeClickHandler(evt) {
+  _priceChangeHandler(evt) {
     evt.preventDefault();
-    this._callback.closeClick();
+    this.updateData({ basePrice: evt.target.value });
+  }
+
+  _destinationChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      destination: { city: evt.target.value, description: generateDescription(), pictures: generatePictures() },
+    });
+  }
+
+  _routeTypeChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({ type: evt.target.value, offers: generateOffers() });
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._callback.formSubmit(EditEvent.parseDataToEvent(this._data));
+  }
+
+  _closeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeClick();
   }
 
   static parseEventToData(event) {
