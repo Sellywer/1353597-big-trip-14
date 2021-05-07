@@ -1,6 +1,11 @@
 import {getFormDateFormat} from '../utils/event';
-import SmartView from './smart-view';
+import SmartView from './smart';
 import {generatePictures, generateOffers, generateDescription} from '../mock/point-mock';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createEventEditTemplate = (event) => {
   const {type, destination, offers, dateFrom, dateTo, basePrice} = event;
@@ -167,14 +172,21 @@ export default class EditEvent extends SmartView  {
     super();
     this._data = EditEvent.parseEventToData(event);
     this._element = null;
+    this._dateFromPicker = null;
+    this._dateToPicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._closeClickHandler  = this._closeClickHandler.bind(this);
     this._routeTypeChangeHandler = this._routeTypeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
+    this._dateInputHandler = this._dateInputHandler.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDateFromPicker();
+    this._setDateToPicker();
   }
 
   getTemplate() {
@@ -194,6 +206,8 @@ export default class EditEvent extends SmartView  {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this._setDateFromPicker();
+    this._setDateToPicker();
   }
 
   reset(event) {
@@ -206,6 +220,12 @@ export default class EditEvent extends SmartView  {
       .addEventListener('change', this._destinationChangeHandler);
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._routeTypeChangeHandler);
     this.getElement().querySelector('.event__input--price').addEventListener('change', this._priceChangeHandler);
+    this.getElement()
+      .querySelector('#event-start-time-1')
+      .addEventListener('change', this._dateInputHandler);
+    this.getElement()
+      .querySelector('#event-end-time-1')
+      .addEventListener('change', this._dateInputHandler);
   }
 
   _priceChangeHandler(evt) {
@@ -223,6 +243,77 @@ export default class EditEvent extends SmartView  {
   _routeTypeChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({ type: evt.target.value, offers: generateOffers() });
+  }
+
+  _setDateFromPicker() {
+    if (this._dateFromPicker) {
+      this._dateFromPicker.destroy();
+      this._dateFromPicker = null;
+    }
+
+    this._dateFromPicker = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      Object.assign({},
+        {
+          enableTime: true,
+          dateFormat: 'd/m/y H:i',
+          time_24hr: true,
+        },
+        {
+          defaultDate: this._data.dateFrom,
+          onChange: this._dateFromChangeHandler,
+        }),
+    );
+  }
+
+  _setDateToPicker() {
+    if (this._dateToPicker) {
+      this._dateToPicker.destroy();
+      this._dateToPicker = null;
+    }
+
+    this._dateToPicker = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      Object.assign({},
+        {
+          enableTime: true,
+          dateFormat: 'd/m/y H:i',
+          time_24hr: true,
+        },
+        {
+          minDate: this._data.dateFrom,
+          defaultDate: this._data.dateTo,
+          onChange: this._dateToChangeHandler,
+        }),
+    );
+  }
+
+  _dateFromChangeHandler([userDate]) {
+    this.updateData({
+      dateFrom: userDate,
+    });
+  }
+
+  _dateToChangeHandler([userDate]) {
+    this.updateData({
+      dateTo: userDate,
+    });
+  }
+
+  _dateInputHandler(evt) {
+    evt.preventDefault();
+    dayjs.extend(customParseFormat);
+    const formatedData = dayjs(evt.target.value, 'DD/MM/YY HH:mm');
+    if (evt.target.id === 'event-start-time-1') {
+      this.updateData({
+        dateFrom: dayjs(formatedData).toDate(),
+      });
+    }
+    if (evt.target.id === 'event-end-time-1') {
+      this.updateData({
+        dateTo: dayjs(formatedData).toDate(),
+      });
+    }
   }
 
   _formSubmitHandler(evt) {
