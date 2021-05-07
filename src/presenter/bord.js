@@ -35,7 +35,7 @@ export default class BoardPresenter  {
     render(this._boardComponent, this._tripListComponent, RenderPosition.BEFOREEND);
 
     this._renderBoard();
-    this._renderNewEvents(boardEvents);
+    // this._renderNewEvents(boardEvents);
   }
 
   _handleEventChange(updatedEvent) {
