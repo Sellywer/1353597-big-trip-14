@@ -7,6 +7,12 @@ import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
+const FLATPICKR_SETTINGS = {
+  enableTime: true,
+  dateFormat: 'd/m/y H:i',
+  time_24hr: true,
+};
+
 const createEventEditTemplate = (event) => {
   const {type, destination, offers, dateFrom, dateTo, basePrice} = event;
 
@@ -254,11 +260,7 @@ export default class EditEvent extends SmartView  {
     this._dateFromPicker = flatpickr(
       this.getElement().querySelector('#event-start-time-1'),
       Object.assign({},
-        {
-          enableTime: true,
-          dateFormat: 'd/m/y H:i',
-          time_24hr: true,
-        },
+        FLATPICKR_SETTINGS,
         {
           defaultDate: this._data.dateFrom,
           onChange: this._dateFromChangeHandler,
@@ -275,11 +277,7 @@ export default class EditEvent extends SmartView  {
     this._dateToPicker = flatpickr(
       this.getElement().querySelector('#event-end-time-1'),
       Object.assign({},
-        {
-          enableTime: true,
-          dateFormat: 'd/m/y H:i',
-          time_24hr: true,
-        },
+        FLATPICKR_SETTINGS,
         {
           minDate: this._data.dateFrom,
           defaultDate: this._data.dateTo,

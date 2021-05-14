@@ -2,7 +2,7 @@ import SiteMenuView from './view/site-menu';
 import InfoMainView from './view/info-main';
 import FiltersView from './view/filters';
 
-import BoardPresenter  from './presenter/bord';
+import BoardPresenter  from './presenter/board';
 
 import {generatePoint} from './mock/point-mock';
 import {generateFilter} from './filters';
