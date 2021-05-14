@@ -12,8 +12,9 @@ import { sortByTime, sortByPrice, sortByDate } from '../utils/event';
 import { SortType } from '../utils/const';
 
 export default class BoardPresenter  {
-  constructor(boardContainer) {
+  constructor(boardContainer, eventsModel) {
     this._boardContainer  = boardContainer;
+    this._eventsModel = eventsModel;
     this._eventPresenter = {};
     this._currentSortType = SortType.DEFAULT;
 
@@ -81,6 +82,10 @@ export default class BoardPresenter  {
     if (sortType !== undefined) {
       this._currentSortType = sortType;
     }
+  }
+
+  _getEvents() {
+    return this._eventsModel.getEvents();
   }
 
   _renderEvent(event) {
