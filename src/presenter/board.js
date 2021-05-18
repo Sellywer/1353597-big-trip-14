@@ -5,16 +5,18 @@ import NoEventView from '../view/no-event';
 import NewEventView from '../view/new-event';
 
 import EventPresenter from './events';
+import {filter} from '../utils/filter';
 
 import {render, RenderPosition, remove} from '../utils/render';
 import {UpdateType, UserAction} from '../utils/const';
-import { sortByTime, sortByPrice, sortByDate } from '../utils/event';
-import { SortType } from '../utils/const';
+import {sortByTime, sortByPrice, sortByDate} from '../utils/event';
+import {SortType} from '../utils/const';
 
 export default class BoardPresenter  {
-  constructor(boardContainer, eventsModel) {
+  constructor(boardContainer, eventsModel, filterModel) {
     this._boardContainer  = boardContainer;
     this._eventsModel = eventsModel;
+    this._filterModel = filterModel;
     this._eventPresenter = {};
     this._currentSortType = SortType.DEFAULT;
     this._sortComponent = null;
@@ -30,6 +32,7 @@ export default class BoardPresenter  {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -98,16 +101,20 @@ export default class BoardPresenter  {
   }
 
   _getEvents() {
+    const filterType = this._filterModel.getFilter();
+    const events = this._eventsModel.getEvents();
+    const filtredEvents = filter[filterType](events);
+
     switch (this._currentSortType) {
+      case SortType.DEFAULT:
+        return filtredEvents.sort(sortByDate);
       case SortType.TIME:
-        return this._eventsModel.getEvents().slice().sort(sortByTime);
+        return filtredEvents.sort(sortByTime);
       case SortType.PRICE:
-        return this._eventsModel.getEvents().slice().sort(sortByPrice);
-      default:
-        return this._eventsModel.getEvents().slice().sort(sortByDate);
+        return filtredEvents.sort(sortByPrice);
     }
 
-    return this._eventsModel.getEvents();
+    return filtredEvents;
   }
 
   _renderEvent(event) {
@@ -122,7 +129,6 @@ export default class BoardPresenter  {
   }
 
   _renderEvents() {
-    // events.forEach((event) => this._renderEvent(event));
     this._getEvents().map((item) => this._renderEvent(item));
   }
 
@@ -136,7 +142,7 @@ export default class BoardPresenter  {
     remove(this._noEventComponent);
 
     if (resetSortType) {
-      this._currentSortType = SortType.DAY;
+      this._currentSortType = SortType.DEFAULT;
     }
   }
 
