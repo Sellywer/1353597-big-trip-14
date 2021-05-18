@@ -31,5 +31,9 @@ const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterMod
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel);
 
 boardPresenter.init();
-
 filterPresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  boardPresenter.createEvent();
+});

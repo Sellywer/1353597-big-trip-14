@@ -13,6 +13,30 @@ const FLATPICKR_SETTINGS = {
   time_24hr: true,
 };
 
+
+const BLANK_EVENT = {
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  isFavorite: false,
+  type: 'taxi',
+  destination: {
+    city: '',
+    description: '',
+    pictures: [],
+  },
+  offers: [
+    {
+      title: 'Choose seats',
+      price: 5,
+    },
+    {
+      title: 'Switch to comfort class',
+      price: 100,
+    },
+  ],
+  basePrice: '',
+};
+
 const createEventEditTemplate = (event) => {
   const {type, destination, offers, dateFrom, dateTo, basePrice} = event;
 
@@ -174,7 +198,7 @@ const createEventEditTemplate = (event) => {
 };
 
 export default class EditEvent extends SmartView  {
-  constructor(event) {
+  constructor(event = BLANK_EVENT ) {
     super();
     this._data = EditEvent.parseEventToData(event);
     this._element = null;
