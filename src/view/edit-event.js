@@ -182,6 +182,7 @@ export default class EditEvent extends SmartView  {
     this._dateToPicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._closeClickHandler  = this._closeClickHandler.bind(this);
     this._routeTypeChangeHandler = this._routeTypeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
@@ -214,6 +215,16 @@ export default class EditEvent extends SmartView  {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this._setDateFromPicker();
     this._setDateToPicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   reset(event) {
@@ -317,6 +328,16 @@ export default class EditEvent extends SmartView  {
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._callback.formSubmit(EditEvent.parseDataToEvent(this._data));
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EditEvent.parseDataToEvent(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   _closeClickHandler(evt) {

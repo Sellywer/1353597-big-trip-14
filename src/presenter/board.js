@@ -6,8 +6,8 @@ import NewEventView from '../view/new-event';
 
 import EventPresenter from './events';
 
-import {updateItem} from '../utils/common';
-import {render, RenderPosition} from '../utils/render';
+import {render, RenderPosition, remove} from '../utils/render';
+import {UpdateType, UserAction} from '../utils/const';
 import { sortByTime, sortByPrice, sortByDate } from '../utils/event';
 import { SortType } from '../utils/const';
 
@@ -17,21 +17,22 @@ export default class BoardPresenter  {
     this._eventsModel = eventsModel;
     this._eventPresenter = {};
     this._currentSortType = SortType.DEFAULT;
+    this._sortComponent = null;
 
     this._boardComponent = new EventsBoardView();
     this._tripListComponent = new TripListView();
     this._noEventComponent = new NoEventView();
-    this._sortComponent = new SortView(SortType.DEFAULT);
+    this._newEventComponent = new NewEventView();
 
-    this._handleEventChange = this._handleEventChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._eventsModel.addObserver(this._handleModelEvent);
   }
 
-  init(boardEvents) {
-    this._boardEvents = boardEvents.slice();
-    this._sourcedBoardEvents = boardEvents.slice();
-
+  init() {
     render(this._boardContainer, this._boardComponent, RenderPosition.BEFOREEND);
     render(this._boardComponent, this._tripListComponent, RenderPosition.BEFOREEND);
 
@@ -39,10 +40,34 @@ export default class BoardPresenter  {
     // this._renderNewEvents(boardEvents);
   }
 
-  _handleEventChange(updatedEvent) {
-    this._boardEvents = updateItem(this._boardEvents, updatedEvent);
-    this._sourcedBoardEvents = updateItem(this._sourcedBoardEvents, updatedEvent);
-    this._eventPresenter[updatedEvent.id].init(updatedEvent);
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_EVENT:
+        this._eventsModel.updateEvent(updateType, update);
+        break;
+      case UserAction.ADD_EVENT:
+        this._eventsModel.addEvent(updateType, update);
+        break;
+      case UserAction.DELETE_EVENT:
+        this._eventsModel.deleteEvent(updateType, update);
+        break;
+    }
+  }
+
+  _handleModelEvent(updateType, data) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._eventPresenter[data.id].init(data);
+        break;
+      case UpdateType.MINOR:
+        this._clearBoard();
+        this._renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this._clearBoard({resetSortType: true});
+        this._renderBoard();
+        break;
+    }
   }
 
   _handleModeChange() {
@@ -55,43 +80,40 @@ export default class BoardPresenter  {
     if (this._currentSortType === sortType) {
       return;
     }
-    this._sortEvents(sortType);
+    this._currentSortType = sortType;
 
-    this._clearEvents();
-    this._renderEvents();
+    this._clearBoard();
+    this._renderBoard();
   }
 
   _renderSort() {
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType);
+
     render(this._boardComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-    this._sortEvents();
-  }
-
-  _sortEvents(sortType) {
-    switch (sortType) {
-      case SortType.TIME:
-        this._boardEvents.sort(sortByTime);
-        break;
-      case SortType.PRICE:
-        this._boardEvents.sort(sortByPrice);
-        break;
-      default:
-        this._boardEvents.sort(sortByDate);
-    }
-
-    if (sortType !== undefined) {
-      this._currentSortType = sortType;
-    }
   }
 
   _getEvents() {
+    switch (this._currentSortType) {
+      case SortType.TIME:
+        return this._eventsModel.getEvents().slice().sort(sortByTime);
+      case SortType.PRICE:
+        return this._eventsModel.getEvents().slice().sort(sortByPrice);
+      default:
+        return this._eventsModel.getEvents().slice().sort(sortByDate);
+    }
+
     return this._eventsModel.getEvents();
   }
 
   _renderEvent(event) {
     const eventPresenter = new EventPresenter(
       this._tripListComponent,
-      this._handleEventChange,
+      this._handleViewAction,
       this._handleModeChange,
     );
 
@@ -99,29 +121,35 @@ export default class BoardPresenter  {
     this._eventPresenter[event.id] = eventPresenter;
   }
 
-  _renderEvents(from, to) {
-    this._boardEvents
-      .slice(from, to)
-      .forEach((event) => this._renderEvent(event));
+  _renderEvents() {
+    // events.forEach((event) => this._renderEvent(event));
+    this._getEvents().map((item) => this._renderEvent(item));
   }
 
-  _clearEvents() {
-    Object.values(this._eventPresenter)
+  _clearBoard({resetSortType = false} = {}) {
+    Object
+      .values(this._eventPresenter)
       .forEach((presenter) => presenter.destroy());
     this._eventPresenter = {};
+
+    remove(this._sortComponent);
+    remove(this._noEventComponent);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DAY;
+    }
   }
 
   _renderNoEvents() {
     render(this._boardComponent, this._noEventComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderNewEvents(event) {
-    const newEventsComponent = new NewEventView(event);
-    render(this._tripListComponent, newEventsComponent, RenderPosition.AFTERBEGIN);
+  _renderNewEvents() {
+    render(this._tripListComponent, this._newEventComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderBoard() {
-    if (this._boardEvents.length === 0) {
+    if (this._getEvents().length === 0) {
       this._renderNoEvents();
       return;
     }
