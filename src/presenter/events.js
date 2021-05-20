@@ -2,11 +2,10 @@ import EventView from '../view/event';
 import EventEditView from '../view/edit-event';
 
 import {render, RenderPosition, replace, remove} from '../utils/render';
+import {UserAction, UpdateType, Mode} from '../utils/const';
+import {isDatesEqual} from '../utils/event';
+import {DESTINATION_CITIES} from '../mock/point-mock';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 
 export default class Event {
   constructor(eventListContainer, changeData, changeMode) {
@@ -28,22 +27,27 @@ export default class Event {
     this._handleEventClick = this._handleEventClick.bind(this);
 
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+
+    this._handleDeleteEditClick = this._handleDeleteEditClick.bind(this);
   }
 
   init(event) {
     this._event = event;
+    this._destinations = DESTINATION_CITIES;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event);
+    this._eventEditComponent = new EventEditView(event, this._destinations );
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setCloseClickHandler(this._handleEventClick);
+
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteEditClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventListContainer, this._eventComponent, RenderPosition.BEFOREEND);
@@ -74,7 +78,11 @@ export default class Event {
   }
 
   _handleFavoriteClick() {
+    const isMinorUpdate = !isDatesEqual(this._event.dueDate, event.dueDate);
+
     this._changeData(
+      UserAction.UPDATE_EVENT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       Object.assign(
         {},
         this._event,
@@ -114,8 +122,22 @@ export default class Event {
     this._replaceFormToCard();
   }
 
-  _handleFormSubmit(event) {
-    this._changeData(event);
+  _handleFormSubmit(update) {
+    const isMinorUpdate = !isDatesEqual(this._event.dateTo, event.dateTo);
+
+    this._changeData(
+      UserAction.UPDATE_EVENT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this._replaceFormToCard();
+  }
+
+  _handleDeleteEditClick(event) {
+    this._changeData(
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
+      event,
+    );
   }
 }

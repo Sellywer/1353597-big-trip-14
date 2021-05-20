@@ -1,30 +1,67 @@
 import {getFormDateFormat} from '../utils/event';
+import {firstLetterCaps, isArrayEmpty} from '../utils/common.js';
 import SmartView from './smart';
-import {generatePictures, generateOffers, generateDescription} from '../mock/point-mock';
+import {Mode} from '../utils/const';
+import {optionsMap, destinations} from '../mock/point-mock';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import flatpickr from 'flatpickr';
+// import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createEventEditTemplate = (event) => {
-  const {type, destination, offers, dateFrom, dateTo, basePrice} = event;
+const FLATPICKR_SETTINGS = {
+  enableTime: true,
+  dateFormat: 'd/m/y H:i',
+  time_24hr: true,
+};
 
-  const offersContainerClassName = offers.length !== 0 ? '' : ' visually-hidden';
 
-  const createEventOfferSelectors = (offers) => {
-    return offers.map((item) => {
-      const checked = item.isChecked ? 'checked' : '';
-      return `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.title}" type="checkbox" name="event-offer-${item.title}" ${checked}>
-          <label class="event__offer-label" for="event-offer-${item.title}">
-            <span class="event__offer-title">${item.title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${item.price}</span>
-          </label>
+const createDestinationsList = (destinations) => {
+  return destinations.map((destination) => {
+    return `<option value="${destination}"></option>`;
+  }).join('');
+};
+
+const createEventTypesListTemplate = (currentType) => {
+  const eventTypes = Array.from(optionsMap.keys());
+
+  const eventTypesList = eventTypes.map((type) =>
+    `<div class="event__type-item">
+      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === currentType ? 'checked' : ''}>
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1" data-type="${type}">${firstLetterCaps(type)}</label>
+    </div>`).join('');
+
+  return eventTypesList;
+};
+
+const createOffersList = ({type, offers}) => {
+  const availableOffers = optionsMap.get(type);
+
+  const offersList = availableOffers.map((offer) => {
+    const {title, price, id} = offer;
+    const isOfferSelected = offers ? offers.some((item) => item.title === title) : false;
+
+    return `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" data-title="${title}" ${isOfferSelected ? 'checked' : ''}>
+      <label class="event__offer-label" for="event-offer-${type}-${id}">
+        <span class="event__offer-title">${title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${price}</span>
+      </label>
       </div>`;
-    }).join('');
-  };
+  }).join('');
+
+  return offersList;
+};
+
+const createOffersContainer = (state) => {
+  return `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  <div class="event__available-offers">${createOffersList(state)}</div>`;
+};
+
+const createEventEditTemplate = (event, destinations) => {
+  const {type, destination, dateFrom, dateTo, basePrice} = event;
 
   const createPictureMarkup = (pictures) => {
     return pictures
@@ -48,6 +85,8 @@ const createEventEditTemplate = (event) => {
   const travelFromDate = getFormDateFormat(dateFrom);
   const travelToDate = getFormDateFormat(dateTo);
 
+  const hasOptions = isArrayEmpty(optionsMap.get(type));
+
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -61,56 +100,7 @@ const createEventEditTemplate = (event) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-
-              <div class="event__type-item">
-                <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === 'taxi' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === 'bus' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === 'train' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === 'ship' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${type === 'transport' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === 'drive' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === 'flight' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${type === 'check-in' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing"  ${type === 'sightseeing' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${type === 'restaurant' ? 'checked' : ''}>
-                <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-              </div>
+                ${createEventTypesListTemplate(type)}
             </fieldset>
           </div>
         </div>
@@ -119,11 +109,9 @@ const createEventEditTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.city}" list="destination-list-1" required>
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${createDestinationsList(destinations)}
           </datalist>
         </div>
 
@@ -140,7 +128,7 @@ const createEventEditTemplate = (event) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" name="event-price" value="${basePrice}" required>
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -150,12 +138,8 @@ const createEventEditTemplate = (event) => {
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers ${offersContainerClassName}">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-          <div class="event__available-offers">
-            ${createEventOfferSelectors(offers)}
-          </div>
+        <section class="event__section  event__section--offers">
+          ${hasOptions ? createOffersContainer(event) : ''}
         </section>
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -168,18 +152,22 @@ const createEventEditTemplate = (event) => {
 };
 
 export default class EditEvent extends SmartView  {
-  constructor(event) {
+  constructor(event, destinations) {
     super();
     this._data = EditEvent.parseEventToData(event);
-    this._element = null;
+    this._mode = Mode;
+    this._destinations = destinations;
+
     this._dateFromPicker = null;
     this._dateToPicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._closeClickHandler  = this._closeClickHandler.bind(this);
     this._routeTypeChangeHandler = this._routeTypeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
+    this._offersSelectorClickHandler = this._offersSelectorClickHandler.bind(this);
     this._dateInputHandler = this._dateInputHandler.bind(this);
     this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
     this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
@@ -190,7 +178,7 @@ export default class EditEvent extends SmartView  {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._data);
+    return createEventEditTemplate(this._data, this._destinations);
   }
 
   setFormSubmitHandler(callback) {
@@ -208,6 +196,16 @@ export default class EditEvent extends SmartView  {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this._setDateFromPicker();
     this._setDateToPicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   reset(event) {
@@ -226,6 +224,9 @@ export default class EditEvent extends SmartView  {
     this.getElement()
       .querySelector('#event-end-time-1')
       .addEventListener('change', this._dateInputHandler);
+    this.getElement()
+      .querySelector('.event__available-offers')
+      .addEventListener('click', this._offersSelectorClickHandler);
   }
 
   _priceChangeHandler(evt) {
@@ -233,16 +234,43 @@ export default class EditEvent extends SmartView  {
     this.updateData({ basePrice: evt.target.value });
   }
 
+  _offersSelectorClickHandler(evt) {
+    evt.preventDefault;
+    const target = evt.target.closest('input');
+    if (!target) {
+      return;
+    }
+    const clickedOption = target.dataset.title;
+    const availableOptions = optionsMap.get(this._data.type);
+    const eventOffers = this._data.offers;
+
+    const selectedOption = availableOptions.find((item) => item.title === clickedOption);
+    const optionToAdd = eventOffers.find((item) => item.title === clickedOption);
+
+    const selectedOptions = optionToAdd ? eventOffers.filter((item) => item.title !== clickedOption) : [...eventOffers, selectedOption];
+
+    this.updateData({
+      offers: selectedOptions,
+    });
+  }
+
   _destinationChangeHandler(evt) {
     evt.preventDefault();
+    const destinationName = evt.target.value;
+    const newDestination = destinations.find((destination) => destination.city === destinationName);
+    if (!newDestination) {
+      evt.target.setCustomValidity('Select a waypoint from the list');
+      evt.target.reportValidity();
+      return;
+    }
     this.updateData({
-      destination: { city: evt.target.value, description: generateDescription(), pictures: generatePictures() },
+      destination: newDestination,
     });
   }
 
   _routeTypeChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({ type: evt.target.value, offers: generateOffers() });
+    this.updateData({ type: evt.target.value});
   }
 
   _setDateFromPicker() {
@@ -254,11 +282,7 @@ export default class EditEvent extends SmartView  {
     this._dateFromPicker = flatpickr(
       this.getElement().querySelector('#event-start-time-1'),
       Object.assign({},
-        {
-          enableTime: true,
-          dateFormat: 'd/m/y H:i',
-          time_24hr: true,
-        },
+        FLATPICKR_SETTINGS,
         {
           defaultDate: this._data.dateFrom,
           onChange: this._dateFromChangeHandler,
@@ -275,11 +299,7 @@ export default class EditEvent extends SmartView  {
     this._dateToPicker = flatpickr(
       this.getElement().querySelector('#event-end-time-1'),
       Object.assign({},
-        {
-          enableTime: true,
-          dateFormat: 'd/m/y H:i',
-          time_24hr: true,
-        },
+        FLATPICKR_SETTINGS,
         {
           minDate: this._data.dateFrom,
           defaultDate: this._data.dateTo,
@@ -321,9 +341,23 @@ export default class EditEvent extends SmartView  {
     this._callback.formSubmit(EditEvent.parseDataToEvent(this._data));
   }
 
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EditEvent.parseDataToEvent(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
+  }
+
   _closeClickHandler(evt) {
     evt.preventDefault();
-    this._callback.closeClick();
+    if (this._mode === Mode.ADDING) {
+      return;
+    }
+
+    this._callback.closeClick(EditEvent.parseDataToEvent(this._data));
   }
 
   static parseEventToData(event) {

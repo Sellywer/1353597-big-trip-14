@@ -1,10 +1,10 @@
 import AbstractView from './abstract';
 import {SortType} from '../utils/const';
 
-const createSortTemplate = (sortType) => {
+const createSortTemplate = (currentSortType) => {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
-      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" ${sortType === SortType.DEFAULT ? 'checked' : ''}>
+      <input id="sort-day" class="trip-sort__input  visually-hidden" ${currentSortType === SortType.DEFAULT ? 'checked' : ''} type="radio" name="trip-sort" value="sort-day">
       <label class="trip-sort__btn" for="sort-day" data-sort-type="${SortType.DEFAULT}">Day</label>
     </div>
 
@@ -14,12 +14,12 @@ const createSortTemplate = (sortType) => {
     </div>
 
     <div class="trip-sort__item  trip-sort__item--time">
-      <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${sortType === SortType.TIME ? 'checked' : ''}>
+      <input id="sort-time" class="trip-sort__input  visually-hidden" ${currentSortType === SortType.TIME ? 'checked' : ''} type="radio" name="trip-sort" value="sort-time">
       <label class="trip-sort__btn" for="sort-time" data-sort-type="${SortType.TIME}">Time</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--price">
-      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${sortType === SortType.PRICE ? 'checked' : ''}>
+      <input id="sort-price" class="trip-sort__input  visually-hidden" ${currentSortType === SortType.PRICE ? 'checked' : ''} type="radio" name="trip-sort" value="sort-price">
       <label class="trip-sort__btn" for="sort-price" data-sort-type="${SortType.PRICE}">Price</label>
     </div>
 
@@ -31,9 +31,9 @@ const createSortTemplate = (sortType) => {
 };
 
 export default class Sort extends AbstractView {
-  constructor(sortType) {
+  constructor(currentSortType) {
     super();
-    this._currentSortType = sortType;
+    this._currentSortType = currentSortType;
 
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }

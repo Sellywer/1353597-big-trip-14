@@ -27,16 +27,10 @@ export const getRandomArray = (array, min, max) => {
   return newArray;
 };
 
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
+export const firstLetterCaps = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
+export const isArrayEmpty = (array) => {
+  return array.length === 0 ? false : true;
 };

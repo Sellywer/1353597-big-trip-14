@@ -34,6 +34,30 @@ export const humanDurationFormat = (duration) => {
   }
 };
 
+const humanizeDuration = (minuteDuration, hoursDuration, daysDuration) => {
+  const huminizedDays = daysDuration < 10 ? '0' + daysDuration : daysDuration;
+  const humanizedHours = (hoursDuration - daysDuration * 24) < 10 ? '0' + (hoursDuration - daysDuration * 24) : hoursDuration - daysDuration * 24;
+  const humanizedMinutes = (minuteDuration - hoursDuration * 60) < 10 ? '0' + (minuteDuration - hoursDuration * 60) : minuteDuration -hoursDuration * 60;
+
+  if (daysDuration > 0) {
+    return `${huminizedDays}D ${humanizedHours}H ${humanizedMinutes}M`;
+  }
+
+  if (daysDuration === 0 && hoursDuration !== 0) {
+    return `${humanizedHours}H ${humanizedMinutes}M`;
+  }
+
+  return `${humanizedMinutes}M`;
+};
+
+export const humanizeTotalDuration = (duration) => {
+  const minuteDuration = duration;
+  const hoursDuration = Math.floor(duration / 60);
+  const daysDuration =  Math.floor(hoursDuration /24);
+
+  return humanizeDuration(minuteDuration, hoursDuration, daysDuration);
+};
+
 export const isEventFrom = (event) => {
   return dayjs().isAfter(event, 'D');
 };
@@ -95,7 +119,7 @@ export const getEventDateFormat = (date) => {
 };
 
 export const getFormDateFormat = (date) => {
-  return dayjs(date).format('YY/MM/DD HH:mm');
+  return dayjs(date).format('DD/MM/YY HH:MM');
 };
 
 export const getDayFormat = (date) => {
@@ -129,4 +153,8 @@ export const sortByPrice = (priceA, priceB) => {
 
 export const sortByDate = (pointA, pointB) => {
   return dayjs(pointA.dateFrom).diff(pointB.dateTo);
+};
+
+export const isDatesEqual = (dateA, dateB) => {
+  return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
 };
