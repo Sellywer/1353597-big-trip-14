@@ -1,7 +1,7 @@
 import {getFormDateFormat} from '../utils/event';
 import {firstLetterCaps, isArrayEmpty} from '../utils/common.js';
 import SmartView from './smart';
-import {generatePictures, generateDescription, optionsMap} from '../mock/point-mock';
+import {destinations, optionsMap} from '../mock/point-mock';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import flatpickr from 'flatpickr';
@@ -266,8 +266,15 @@ export default class EditEvent extends SmartView  {
 
   _destinationChangeHandler(evt) {
     evt.preventDefault();
+    const destinationName = evt.target.value;
+    const newDestination = destinations.find((destination) => destination.city === destinationName);
+    if (!newDestination) {
+      evt.target.setCustomValidity('Select a waypoint from the list');
+      evt.target.reportValidity();
+      return;
+    }
     this.updateData({
-      destination: { city: evt.target.value, description: generateDescription(), pictures: generatePictures() },
+      destination: newDestination,
     });
   }
 
