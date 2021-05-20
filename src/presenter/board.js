@@ -4,12 +4,12 @@ import SortView from '../view/sort';
 import NoEventView from '../view/no-event';
 
 import EventPresenter from './events';
-import EventNewPresenter from './new-event';
+import EventNewPresenter from './event-new';
 import {filter} from '../utils/filter';
 
 import {render, RenderPosition, remove} from '../utils/render';
 import {sortByTime, sortByPrice, sortByDate} from '../utils/event';
-import {SortType, UpdateType, UserAction, FilterType} from '../utils/const';
+import {SortType, UpdateType, UserAction} from '../utils/const';
 
 export default class BoardPresenter  {
   constructor(boardContainer, eventsModel, filterModel) {
@@ -29,8 +29,6 @@ export default class BoardPresenter  {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._eventsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
 
     this._EventNewPresenter = new EventNewPresenter(this._tripListComponent, this._handleViewAction);
   }
@@ -39,14 +37,25 @@ export default class BoardPresenter  {
     render(this._boardContainer, this._boardComponent, RenderPosition.BEFOREEND);
     render(this._boardComponent, this._tripListComponent, RenderPosition.BEFOREEND);
 
+
+    this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderBoard();
-    // this._renderNewEvents(boardEvents);
   }
 
-  createEvent() {
+  destroy() {
+    this._clearBoard({resetSortType: true});
+    remove(this._boardComponent);
+    remove(this._tripListComponent);
+
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  createEvent(callback) {
     this._currentSortType = SortType.DEFAULT;
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._EventNewPresenter.init();
+    this._EventNewPresenter.init(callback);
   }
 
   _handleViewAction(actionType, updateType, update) {

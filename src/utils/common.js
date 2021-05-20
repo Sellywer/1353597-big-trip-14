@@ -26,3 +26,11 @@ export const getRandomArray = (array, min, max) => {
   }
   return newArray;
 };
+
+export const firstLetterCaps = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const isArrayEmpty = (array) => {
+  return array.length === 0 ? false : true;
+};

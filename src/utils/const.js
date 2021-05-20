@@ -1,3 +1,8 @@
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export const SortType = {
   DEFAULT: 'day',
   TIME: 'time',
@@ -19,4 +24,9 @@ export const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PAST: 'past',
+};
+
+export const MenuItem = {
+  TABLE: 'TABLE',
+  STATISTICS: 'STATISTICS',
 };

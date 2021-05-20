@@ -2,13 +2,10 @@ import EventView from '../view/event';
 import EventEditView from '../view/edit-event';
 
 import {render, RenderPosition, replace, remove} from '../utils/render';
-import {UserAction, UpdateType} from '../utils/const';
+import {UserAction, UpdateType, Mode} from '../utils/const';
 import {isDatesEqual} from '../utils/event';
+import {DESTINATION_CITIES} from '../mock/point-mock';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 
 export default class Event {
   constructor(eventListContainer, changeData, changeMode) {
@@ -36,12 +33,13 @@ export default class Event {
 
   init(event) {
     this._event = event;
+    this._destinations = DESTINATION_CITIES;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event);
+    this._eventEditComponent = new EventEditView(event, this._destinations );
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -80,9 +78,11 @@ export default class Event {
   }
 
   _handleFavoriteClick() {
+    const isMinorUpdate = !isDatesEqual(this._event.dueDate, event.dueDate);
+
     this._changeData(
       UserAction.UPDATE_EVENT,
-      UpdateType.MINOR,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       Object.assign(
         {},
         this._event,
