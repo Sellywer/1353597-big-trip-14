@@ -11,9 +11,23 @@ import {renderPoints, destinations} from './mock/point-mock';
 import {render, remove, RenderPosition} from './utils/render';
 import {MenuItem, UpdateType, FilterType} from './utils/const';
 
+import Api from './api.js';
+
+const AUTHORIZATION = 'Basic cbym40thgjvbljh16';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+
 const TRIP_EVENTS_COUNT = 17;
 let statisticsComponent = null;
 const events = renderPoints(TRIP_EVENTS_COUNT, destinations);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getPoints().then((points) => {
+  console.log(points);
+  // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
+  // а ещё на сервере используется snake_case, а у нас camelCase.
+  // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
+  // Есть вариант получше - паттерн "Адаптер"
+});
 
 const mainElement = document.querySelector('.page-body');
 const siteMenuComponent = new SiteMenuView();
