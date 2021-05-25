@@ -32,8 +32,8 @@ export default class Event {
 
   init(event, offers, destinations) {
     this._event = event;
-    this._destinations = destinations;
     this._offers = offers;
+    this._destinations = destinations;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
@@ -117,11 +117,15 @@ export default class Event {
   }
 
   _handleEventClick() {
+    this._eventEditComponent.reset(this._event);
     this._replaceFormToCard();
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleFormSubmit(update) {
-    const isMinorUpdate = !isDatesEqual(this._event.dateTo, update.dateTo);
+    const isMinorUpdate = !isDatesEqual(this._event.dateFrom, update.dateFrom);
+
+    this._event.basePrice !== update.basePrice;
 
     this._changeData(
       UserAction.UPDATE_EVENT,

@@ -14,7 +14,6 @@ const FLATPICKR_SETTINGS = {
   time_24hr: true,
 };
 
-
 const createDestinationsList = (destinations) => {
   return destinations.map((destination) => {
     return `<option value="${destination.name}"></option>`;

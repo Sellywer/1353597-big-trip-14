@@ -56,43 +56,43 @@ export default class Events extends Observer {
     this._notify(updateType);
   }
 
-  static adaptToClient(point) {
-    const adaptedPoint = Object.assign(
+  static adaptToClient(event) {
+    const adaptedEvent = Object.assign(
       {},
-      point,
+      event,
       {
-        basePrice: point.base_price,
-        dateFrom: new Date(point.date_from),
-        dateTo: new Date(point.date_to),
-        isFavourite: point.is_favorite,
+        basePrice: event.base_price,
+        dateFrom: new Date(event.date_from),
+        dateTo: new Date(event.date_to),
+        isFavourite: event.is_favorite,
       },
     );
 
-    delete adaptedPoint.base_price,
-    delete adaptedPoint.date_from;
-    delete adaptedPoint.date_to;
-    delete adaptedPoint.is_favorite;
+    delete adaptedEvent.base_price,
+    delete adaptedEvent.date_from;
+    delete adaptedEvent.date_to;
+    delete adaptedEvent.is_favorite;
 
-    return adaptedPoint;
+    return adaptedEvent;
   }
 
-  static adaptToServer(point) {
-    const adaptedPoint = Object.assign(
+  static adaptToServer(event) {
+    const adaptedEvent = Object.assign(
       {},
-      point,
+      event,
       {
-        'base_price': point.basePrice,
-        'date_from': point.dateFrom.toISOString(),
-        'date_to': point.dateTo.toISOString(),
-        'is_favorite': point.isFavourite,
+        'base_price': event.basePrice,
+        'date_from': event.dateFrom.toISOString(),
+        'date_to': event.dateTo.toISOString(),
+        'is_favorite': event.isFavourite,
       },
     );
 
-    delete adaptedPoint.basePrice;
-    delete adaptedPoint.dateFrom;
-    delete adaptedPoint.dateTo;
-    delete adaptedPoint.isFavourite;
+    delete adaptedEvent.basePrice;
+    delete adaptedEvent.dateFrom;
+    delete adaptedEvent.dateTo;
+    delete adaptedEvent.isFavourite;
 
-    return adaptedPoint;
+    return adaptedEvent;
   }
 }

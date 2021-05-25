@@ -7,7 +7,11 @@ import {getDateFormat,
 import AbstractView from './abstract.js';
 
 const createOffersList = (offers) => {
-  const selectedOffersList = offers.map((offer) => {
+
+  if (offers === null) {
+    return '';
+  }
+  return offers.map((offer) => {
     return `<li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
@@ -15,7 +19,6 @@ const createOffersList = (offers) => {
       </li>`;
   }).join('');
 
-  return selectedOffersList;
 };
 
 const createTripItemListEventsTemplate = (event) => {
@@ -76,8 +79,8 @@ export default class Event extends AbstractView {
     this._events = events;
 
     this._editClickHandler = this._editClickHandler.bind(this);
-    this._closeClickHandler = this._closeClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._closeClickHandler = this._closeClickHandler.bind(this);
   }
 
   getTemplate() {

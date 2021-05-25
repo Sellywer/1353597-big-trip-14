@@ -73,19 +73,19 @@ export default class BoardPresenter  {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this._api.updateEvents(update).then((response) => {
+        this._api.updateEvent(update).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
         });
         break;
       case UserAction.ADD_EVENT:
-        // this._api.addNewEvent(update).then((response) => {
-        this._eventsModel.addEvent(updateType, update);
-        // });
+        this._api.addNewEvent(update).then((response) => {
+          this._eventsModel.addEvent(updateType, response);
+        });
         break;
       case UserAction.DELETE_EVENT:
-        // this._api.deleteEvent(update).then(() => {
-        this._eventsModel.deleteEvent(updateType, update);
-        // });
+        this._api.deleteEvent(update).then(() => {
+          this._eventsModel.deleteEvent(updateType, update);
+        });
         break;
     }
   }
@@ -93,7 +93,7 @@ export default class BoardPresenter  {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._eventPresenter[data.id].init(data);
+        this._eventPresenter[data.id].init(data, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
         break;
       case UpdateType.MINOR:
         this._clearBoard();
@@ -211,6 +211,6 @@ export default class BoardPresenter  {
     }
 
     this._renderSort();
-    this._renderEvents(this._eventsModel);
+    this._renderEvents(this._getEvents);
   }
 }

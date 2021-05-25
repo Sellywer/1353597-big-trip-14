@@ -32,11 +32,11 @@ export default class Api {
     return this._load({url: 'offers'}).then(Api.toJSON);
   }
 
-  updateEvents(events) {
+  updateEvent(event) {
     return this._load({
-      url: `points/${events.id}`,
+      url: `points/${event.id}`,
       method: Method.PUT,
-      body: JSON.stringify(EventsModel.adaptToServer(events)),
+      body: JSON.stringify(EventsModel.adaptToServer(event)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.toJSON)
@@ -51,8 +51,7 @@ export default class Api {
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.toJSON)
-      .then((events) => {
-        return EventsModel.adaptToClient(events);});
+      .then(EventsModel.adaptToClient);
   }
 
   deleteEvent (events) {

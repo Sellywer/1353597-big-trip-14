@@ -1,7 +1,6 @@
 import {getFormDateFormat} from '../utils/event';
 import {firstLetterCaps, isArrayEmpty} from '../utils/common.js';
 import SmartView from './smart';
-import {Mode} from '../utils/const';
 
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
@@ -175,7 +174,6 @@ export default class EditEvent extends SmartView  {
   }
 
   getTemplate() {
-
     return createEventEditTemplate(this._data, this._availableOffers, this._destinations);
   }
 
@@ -189,12 +187,18 @@ export default class EditEvent extends SmartView  {
     this.getElement().querySelector('.event__rollup-btn--close').addEventListener('click', this._closeClickHandler);
   }
 
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
+  }
+
   restoreHandlers() {
     this._setInnerHandlers();
-    this.setFormSubmitHandler(this._callback.formSubmit);
     this._setDateFromPicker();
     this._setDateToPicker();
+    this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setCloseClickHandler(this._callback.closeClick);
   }
 
   removeElement() {
@@ -213,12 +217,16 @@ export default class EditEvent extends SmartView  {
   _setInnerHandlers() {
     this.getElement().querySelector('.event__input--destination')
       .addEventListener('change', this._destinationChangeHandler);
+
     this.getElement().querySelector('.event__available-offers')
       .addEventListener('click', this._offersSelectorClickHandler);
+
     this.getElement().querySelector('.event__type-group')
       .addEventListener('click', this._routeTypeChangeHandler);
+
     this.getElement().querySelector('.event__input--price')
       .addEventListener('change', this._priceChangeHandler);
+
     this.getElement().querySelector('#event-start-time-1')
       .addEventListener('change', this._dateInputHandler);
     this.getElement().querySelector('#event-end-time-1')
@@ -227,7 +235,19 @@ export default class EditEvent extends SmartView  {
 
   _priceChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({ basePrice: evt.target.value });
+    const price = Number(evt.target.value);
+
+    if (isNaN(price) || price < 0) {
+      evt.target.setCustomValidity('Price must be a positive number');
+      evt.target.reportValidity();
+      return;
+    }
+    evt.target.setCustomValidity('');
+
+    this.updateData(
+      {
+        basePrice: parseInt(price, 10),
+      }, true);
   }
 
   _offersSelectorClickHandler(evt) {
@@ -237,7 +257,9 @@ export default class EditEvent extends SmartView  {
       return;
     }
     const clickedOption = target.dataset.title;
+
     const availableOptions = this._availableOffers.get(this._data.type);
+
     const eventOffers = this._data.offers;
 
     const selectedOption = availableOptions.find((item) => item.title === clickedOption);
@@ -357,16 +379,8 @@ export default class EditEvent extends SmartView  {
     this._callback.deleteClick(EditEvent.parseDataToEvent(this._data));
   }
 
-  setDeleteClickHandler(callback) {
-    this._callback.deleteClick = callback;
-    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
-  }
-
   _closeClickHandler(evt) {
     evt.preventDefault();
-    if (this._mode === Mode.ADDING) {
-      return;
-    }
 
     this._callback.closeClick(EditEvent.parseDataToEvent(this._data));
   }
@@ -376,8 +390,6 @@ export default class EditEvent extends SmartView  {
   }
 
   static parseDataToEvent(data) {
-    data = Object.assign({}, data);
-
-    return data;
+    return Object.assign({}, data);
   }
 }
