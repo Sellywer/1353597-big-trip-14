@@ -3,11 +3,12 @@ import InfoMainView from './view/info-main';
 import StatisticsView from './view/statistics.js';
 import EventsModel from './model/events';
 import FilterModel from './model/filter';
+import DestinationsModel from './model/destinations';
+import OffersModel from './model/offers';
 
 import BoardPresenter  from './presenter/board';
 import FilterPresenter from './presenter/filter';
 
-import {renderPoints, destinations} from './mock/point-mock';
 import {render, remove, RenderPosition} from './utils/render';
 import {MenuItem, UpdateType, FilterType} from './utils/const';
 
@@ -16,18 +17,7 @@ import Api from './api.js';
 const AUTHORIZATION = 'Basic cbym40thgjvbljh16';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
-const TRIP_EVENTS_COUNT = 17;
 let statisticsComponent = null;
-const events = renderPoints(TRIP_EVENTS_COUNT, destinations);
-const api = new Api(END_POINT, AUTHORIZATION);
-
-api.getPoints().then((points) => {
-  console.log(points);
-  // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
-  // а ещё на сервере используется snake_case, а у нас camelCase.
-  // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
-  // Есть вариант получше - паттерн "Адаптер"
-});
 
 const mainElement = document.querySelector('.page-body');
 const siteMenuComponent = new SiteMenuView();
@@ -38,16 +28,15 @@ const siteFilterElement = siteMainElement.querySelector('.trip-controls__filters
 const boardContainer = mainElement.querySelector('.board-container');
 const addNewEventButton = document.querySelector('.trip-main__event-add-btn');
 
+const api = new Api(END_POINT, AUTHORIZATION);
+
 const eventsModel = new EventsModel();
-eventsModel.setEvents(events);
-
 const filterModel = new FilterModel();
+const offersModel = new OffersModel();
+const destinationsModel = new DestinationsModel();
 
-render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
-render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
-
-const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel);
-const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel);
+const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api);
+const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel, offersModel, destinationsModel);
 
 const handleEventNewFormClose = () => {
   addNewEventButton.removeAttribute('disabled');
@@ -72,11 +61,6 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-
-boardPresenter.init();
-filterPresenter.init();
-
 addNewEventButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   const menuToggle = document.querySelector('.trip-tabs__btn--active');
@@ -88,3 +72,25 @@ addNewEventButton.addEventListener('click', (evt) => {
   boardPresenter.createEvent(handleEventNewFormClose);
   addNewEventButton.disabled = true;
 });
+
+Promise.all([
+  api.getOffers(),
+  api.getDestinations(),
+  api.getEvents(),
+]).then(([offers, destinations, events]) => {
+  offersModel.setOffers(offers);
+  destinationsModel.setDestinations(destinations);
+  eventsModel.setEvents(UpdateType.INIT, events);
+
+  render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
+  render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  filterPresenter.init();
+})
+  .catch(() => {
+    offersModel.setOffers([]);
+    destinationsModel.setDestinations([]);
+    eventsModel.setEvents(UpdateType.INIT, []);
+  });
+
+boardPresenter.init();

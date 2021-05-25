@@ -4,7 +4,6 @@ import EventEditView from '../view/edit-event';
 import {render, RenderPosition, replace, remove} from '../utils/render';
 import {UserAction, UpdateType, Mode} from '../utils/const';
 import {isDatesEqual} from '../utils/event';
-import {DESTINATION_CITIES} from '../mock/point-mock';
 
 
 export default class Event {
@@ -31,15 +30,16 @@ export default class Event {
     this._handleDeleteEditClick = this._handleDeleteEditClick.bind(this);
   }
 
-  init(event) {
+  init(event, offers, destinations) {
     this._event = event;
-    this._destinations = DESTINATION_CITIES;
+    this._destinations = destinations;
+    this._offers = offers;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event, this._destinations );
+    this._eventEditComponent = new EventEditView(event, offers, destinations);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -78,11 +78,9 @@ export default class Event {
   }
 
   _handleFavoriteClick() {
-    const isMinorUpdate = !isDatesEqual(this._event.dueDate, event.dueDate);
-
     this._changeData(
       UserAction.UPDATE_EVENT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._event,
@@ -123,7 +121,7 @@ export default class Event {
   }
 
   _handleFormSubmit(update) {
-    const isMinorUpdate = !isDatesEqual(this._event.dateTo, event.dateTo);
+    const isMinorUpdate = !isDatesEqual(this._event.dateTo, update.dateTo);
 
     this._changeData(
       UserAction.UPDATE_EVENT,

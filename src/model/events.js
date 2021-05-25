@@ -6,8 +6,10 @@ export default class Events extends Observer {
     this._events  = [];
   }
 
-  setEvents(events) {
+  setEvents(updateType, events) {
     this._events  = events.slice();
+
+    this._notify(updateType);
   }
 
   getEvents() {
@@ -63,7 +65,6 @@ export default class Events extends Observer {
         dateFrom: new Date(point.date_from),
         dateTo: new Date(point.date_to),
         isFavourite: point.is_favorite,
-        city: point.name,
       },
     );
 
@@ -71,7 +72,6 @@ export default class Events extends Observer {
     delete adaptedPoint.date_from;
     delete adaptedPoint.date_to;
     delete adaptedPoint.is_favorite;
-    delete adaptedPoint.name;
 
     return adaptedPoint;
   }
@@ -81,20 +81,17 @@ export default class Events extends Observer {
       {},
       point,
       {
-        'base_price': point.basePrice.toISOString(),
+        'base_price': point.basePrice,
         'date_from': point.dateFrom.toISOString(),
-        'date_to': point.dateTo,
+        'date_to': point.dateTo.toISOString(),
         'is_favorite': point.isFavourite,
-        'name': point.city,
       },
     );
 
-    // Ненужные ключи мы удаляем
     delete adaptedPoint.basePrice;
     delete adaptedPoint.dateFrom;
     delete adaptedPoint.dateTo;
     delete adaptedPoint.isFavourite;
-    delete adaptedPoint.city;
 
     return adaptedPoint;
   }
