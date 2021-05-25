@@ -6,8 +6,25 @@ import {getDateFormat,
   humanDurationFormat} from '../utils/event.js';
 import AbstractView from './abstract.js';
 
+const createOffersList = (offers) => {
+
+  if (offers === null) {
+    return '';
+  }
+  return offers.map((offer) => {
+    return `<li class="event__offer">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </li>`;
+  }).join('');
+
+};
+
 const createTripItemListEventsTemplate = (event) => {
+
   const {type, offers, isFavorite, dateFrom, dateTo, basePrice, destination} = event;
+
   const favouriteClassName  = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
     : 'event__favorite-btn';
@@ -21,23 +38,13 @@ const createTripItemListEventsTemplate = (event) => {
   const eventFromDate = getEventDateFormat(dateFrom);
   const travelFromDate = getDateFormat(dateFrom);
 
-  const createNewOffers = () => {
-    return offers.map((item) => {
-      return `<li class="event__offer">
-          <span class="event__offer-title">${item.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${item.price}</span>
-        </li>`;
-    }).join('');
-  };
-
   return `<li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime="${travelFromDate}">${eventFromDate}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
         </div>
-        <h3 class="event__title">${type} ${destination.city}</h3>
+        <h3 class="event__title">${type} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateFrom}">${humanPointDateFormat(dateFrom)}</time>
@@ -51,7 +58,7 @@ const createTripItemListEventsTemplate = (event) => {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${createNewOffers()}
+          ${createOffersList(offers)}
         </ul>
         <button class="${favouriteClassName}" type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -70,15 +77,15 @@ export default class Event extends AbstractView {
   constructor(events) {
     super();
     this._events = events;
-    this._element = null;
 
     this._editClickHandler = this._editClickHandler.bind(this);
-    this._closeClickHandler = this._closeClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._closeClickHandler = this._closeClickHandler.bind(this);
   }
 
   getTemplate() {
     return createTripItemListEventsTemplate(this._events);
+
   }
 
   _closeClickHandler(evt) {

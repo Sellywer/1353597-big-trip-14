@@ -2,14 +2,29 @@ import EventEditView from '../view/new-event';
 import {nanoid} from 'nanoid';
 import {render, RenderPosition, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
-import {DESTINATION_CITIES} from '../mock/point-mock';
+
+
+const BLANK_EVENT = {
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  isFavorite: false,
+  type: 'taxi',
+  destination: {
+    name: '',
+    description: '',
+    pictures: [],
+  },
+  offers: [],
+  basePrice: '',
+};
 
 export default class EventNew {
-  constructor(eventListContainer, changeData) {
+  constructor(eventListContainer, changeData, offersModel, destinationsModel) {
 
     this._eventListContainer = eventListContainer;
-
     this._changeData = changeData;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._eventNewComponent = null;
     this._destroyCallback = null;
@@ -21,14 +36,11 @@ export default class EventNew {
 
   init(callback) {
 
-    this._destinations = DESTINATION_CITIES;
-    this._destroyCallback = callback;
-
     if (this._eventNewComponent !== null) {
       return;
     }
 
-    this._eventNewComponent = new EventEditView(this._dataModel, this._destinations);
+    this._eventNewComponent = new EventEditView(BLANK_EVENT, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
 
     this._eventNewComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventNewComponent.setDeleteClickHandler(this._handleDeleteClick);
@@ -36,6 +48,7 @@ export default class EventNew {
     render(this._eventListContainer, this._eventNewComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this._escKeyDownHandler);
+    this._handleEventNewFormClose = callback;
   }
 
   destroy() {
@@ -49,7 +62,7 @@ export default class EventNew {
 
     remove(this._eventNewComponent);
     this._eventNewComponent = null;
-
+    this._handleEventNewFormClose();
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
