@@ -38,10 +38,6 @@ const destinationsModel = new DestinationsModel();
 const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel, offersModel, destinationsModel);
 
-const handleEventNewFormClose = () => {
-  addNewEventButton.removeAttribute('disabled');
-};
-
 const handleSiteMenuClick = (menuItem) => {
   siteMenuComponent.setMenuItem(menuItem);
 
@@ -59,6 +55,10 @@ const handleSiteMenuClick = (menuItem) => {
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       break;
   }
+};
+
+const handleEventNewFormClose = () => {
+  addNewEventButton.removeAttribute('disabled');
 };
 
 addNewEventButton.addEventListener('click', (evt) => {
@@ -91,6 +91,9 @@ Promise.all([
     offersModel.setOffers([]);
     destinationsModel.setDestinations([]);
     eventsModel.setEvents(UpdateType.INIT, []);
+    render(siteMainElement, new InfoMainView(), RenderPosition.AFTERBEGIN);
+    render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   });
 
 boardPresenter.init();

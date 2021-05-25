@@ -64,7 +64,7 @@ export default class Events extends Observer {
         basePrice: event.base_price,
         dateFrom: new Date(event.date_from),
         dateTo: new Date(event.date_to),
-        isFavourite: event.is_favorite,
+        isFavorite: event.is_favorite,
       },
     );
 
@@ -84,14 +84,14 @@ export default class Events extends Observer {
         'base_price': event.basePrice,
         'date_from': event.dateFrom.toISOString(),
         'date_to': event.dateTo.toISOString(),
-        'is_favorite': event.isFavourite,
+        'is_favorite': event.isFavorite,
       },
     );
 
     delete adaptedEvent.basePrice;
     delete adaptedEvent.dateFrom;
     delete adaptedEvent.dateTo;
-    delete adaptedEvent.isFavourite;
+    delete adaptedEvent.isFavorite;
 
     return adaptedEvent;
   }

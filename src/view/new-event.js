@@ -35,8 +35,9 @@ const createEventTypesListTemplate = (availableOffers, currentType) => {
 const createOffersList = (availableOffers, type, selectedOffers) => {
   const offers = availableOffers.get(type);
   const offersList = offers.map((offer) => {
-    const {title, price, id} = offer;
-    const isOfferSelected = selectedOffers ? selectedOffers.some((item) => item.title === title) : false;
+    const {title, price} = offer;
+    const id = title.split('').join('-');
+    const isOfferSelected = selectedOffers ? selectedOffers.some((item) => item.title === title && item.price === price) : false;
 
     return `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" data-title="${title}" ${isOfferSelected ? 'checked' : ''}>
@@ -89,7 +90,7 @@ const createEventEditTemplate = (event, availableOffers, destinations) => {
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-          <<div class="event__type-list">
+          <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
                 ${createEventTypesListTemplate(availableOffers, type)}
@@ -127,7 +128,7 @@ const createEventEditTemplate = (event, availableOffers, destinations) => {
         <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers ${hasOptions ? '' : 'visually-hidden'}">
+      <section class="event__section  event__section--offers ${hasOptions ? '' : 'visually-hidden'}">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
             ${hasOptions ? createOffersList(availableOffers, type, offers) : ''}
@@ -222,9 +223,20 @@ export default class EditEvent extends SmartView  {
 
   _priceChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({ basePrice: evt.target.value });
-  }
+    const price = Number(evt.target.value);
 
+    if (isNaN(price) || price < 0) {
+      evt.target.setCustomValidity('Price must be a positive number');
+      evt.target.reportValidity();
+      return;
+    }
+    evt.target.setCustomValidity('');
+
+    this.updateData(
+      {
+        basePrice: parseInt(price, 10),
+      }, true);
+  }
   _offersSelectorClickHandler(evt) {
     evt.preventDefault;
     const target = evt.target.closest('input');
@@ -232,7 +244,9 @@ export default class EditEvent extends SmartView  {
       return;
     }
     const clickedOption = target.dataset.title;
+
     const availableOptions = this._availableOffers.get(this._data.type);
+
     const eventOffers = this._data.offers;
 
     const selectedOption = availableOptions.find((item) => item.title === clickedOption);

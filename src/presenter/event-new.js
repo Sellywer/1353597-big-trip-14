@@ -34,7 +34,7 @@ export default class EventNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(callback) {
 
     if (this._eventNewComponent !== null) {
       return;
@@ -48,6 +48,7 @@ export default class EventNew {
     render(this._eventListContainer, this._eventNewComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this._escKeyDownHandler);
+    this._handleEventNewFormClose = callback;
   }
 
   destroy() {
@@ -61,7 +62,7 @@ export default class EventNew {
 
     remove(this._eventNewComponent);
     this._eventNewComponent = null;
-
+    this._handleEventNewFormClose();
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
