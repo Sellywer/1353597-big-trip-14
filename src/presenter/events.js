@@ -2,7 +2,7 @@ import EventView from '../view/event';
 import EventEditView from '../view/edit-event';
 
 import {render, RenderPosition, replace, remove} from '../utils/render';
-import {UserAction, UpdateType, Mode} from '../utils/const';
+import {UserAction, UpdateType, Mode, State} from '../utils/const';
 import {isDatesEqual} from '../utils/event';
 
 
@@ -60,6 +60,7 @@ export default class Event {
 
     if (this._mode === Mode.EDITING) {
       replace(this._eventEditComponent, prevEventEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevEventComponent);
@@ -77,10 +78,39 @@ export default class Event {
     }
   }
 
+  setViewState(state) {
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._eventComponent.shake(resetFormState);
+        this._eventEditComponent.shake(resetFormState);
+        break;
+    }
+  }
+
   _handleFavoriteClick() {
     this._changeData(
       UserAction.UPDATE_EVENT,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._event,
@@ -132,7 +162,7 @@ export default class Event {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this._replaceFormToCard();
+    // this._replaceFormToCard();
   }
 
   _handleDeleteEditClick(event) {
@@ -143,3 +173,5 @@ export default class Event {
     );
   }
 }
+
+export { State };

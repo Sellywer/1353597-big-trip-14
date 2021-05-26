@@ -4,7 +4,7 @@ import SortView from '../view/sort';
 import NoEventView from '../view/no-event';
 import LoadingView from '../view/loading';
 
-import EventPresenter from './events';
+import EventPresenter, {State as EventPresenterViewState} from './events';
 import EventNewPresenter from './event-new';
 
 import {filter} from '../utils/filter';
@@ -73,19 +73,34 @@ export default class BoardPresenter  {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this._api.updateEvent(update).then((response) => {
-          this._eventsModel.updateEvent(updateType, response);
-        });
+        this._eventPresenter[update.id].setViewState(EventPresenterViewState.SAVING);
+        this._api.updateEvent(update)
+          .then((response) => {
+            this._eventsModel.updateEvent(updateType, response);
+          })
+          .catch(() => {
+            this._eventPresenter[update.id].setViewState(EventPresenterViewState.ABORTING);
+          });
         break;
       case UserAction.ADD_EVENT:
-        this._api.addNewEvent(update).then((response) => {
-          this._eventsModel.addEvent(updateType, response);
-        });
+        this._EventNewPresenter.setSaving();
+        this._api.addNewEvent(update)
+          .then((response) => {
+            this._eventsModel.addEvent(updateType, response);
+          })
+          .catch(() => {
+            this._EventNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_EVENT:
-        this._api.deleteEvent(update).then(() => {
-          this._eventsModel.deleteEvent(updateType, update);
-        });
+        this._eventPresenter[update.id].setViewState(EventPresenterViewState.DELETING);
+        this._api.deleteEvent(update)
+          .then(() => {
+            this._eventsModel.deleteEvent(updateType, update);
+          })
+          .catch(() => {
+            this._eventPresenter[update.id].setViewState(EventPresenterViewState.ABORTING);
+          });
         break;
     }
   }

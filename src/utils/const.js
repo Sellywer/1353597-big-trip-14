@@ -3,6 +3,12 @@ export const Mode = {
   EDITING: 'EDITING',
 };
 
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
 export const SortType = {
   DEFAULT: 'day',
   TIME: 'time',
@@ -14,6 +20,7 @@ export const UserAction = {
   ADD_EVENT: 'ADD_EVENT',
   DELETE_EVENT: 'DELETE_EVENT',
 };
+
 export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
