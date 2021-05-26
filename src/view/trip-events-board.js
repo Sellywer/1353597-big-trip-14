@@ -9,7 +9,6 @@ const createTripEventsBoardTemplate = () => {
 };
 
 export default class EventsBoard extends AbstractView {
-
   getTemplate() {
     return createTripEventsBoardTemplate();
   }

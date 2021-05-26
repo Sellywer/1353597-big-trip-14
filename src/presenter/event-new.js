@@ -1,8 +1,6 @@
 import EventEditView from '../view/new-event';
-import {nanoid} from 'nanoid';
 import {render, RenderPosition, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
-
 
 const BLANK_EVENT = {
   dateFrom: new Date(),
@@ -66,6 +64,25 @@ export default class EventNew {
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._eventNewComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventNewComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this._eventNewComponent.shake(resetFormState);
+  }
+
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
@@ -80,8 +97,8 @@ export default class EventNew {
   _handleFormSubmit(event) {
     this._changeData(
       UserAction.ADD_EVENT,
-      UpdateType.MINOR,
-      Object.assign({id: nanoid()},event),
+      UpdateType.MAJOR,
+      event,
     );
     this.destroy();
   }

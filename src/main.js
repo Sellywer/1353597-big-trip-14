@@ -20,8 +20,6 @@ const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 let statisticsComponent = null;
 
 const mainElement = document.querySelector('.page-body');
-const siteMenuComponent = new SiteMenuView();
-
 const siteMainElement = document.querySelector('.trip-main');
 const siteHeaderElement = siteMainElement.querySelector('.trip-controls__navigation');
 const siteFilterElement = siteMainElement.querySelector('.trip-controls__filters');
@@ -30,6 +28,8 @@ const addNewEventButton = document.querySelector('.trip-main__event-add-btn');
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
+const siteMenuComponent = new SiteMenuView();
+
 const eventsModel = new EventsModel();
 const filterModel = new FilterModel();
 const offersModel = new OffersModel();
@@ -37,6 +37,8 @@ const destinationsModel = new DestinationsModel();
 
 const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel, offersModel, destinationsModel);
+
+addNewEventButton.disabled = true;
 
 const handleSiteMenuClick = (menuItem) => {
   siteMenuComponent.setMenuItem(menuItem);
@@ -86,6 +88,7 @@ Promise.all([
   render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   filterPresenter.init();
+  addNewEventButton.disabled = false;
 })
   .catch(() => {
     offersModel.setOffers([]);

@@ -8,7 +8,7 @@ const createFiltersItemTemplate = (filter, currentFilterType) => {
                   class="trip-filters__filter-input  visually-hidden"
                     type="radio" name="trip-filter"
                     ${type === currentFilterType ? 'checked' : ''}
-                   ${count === 0 ? 'disabled' : ''}
+                    ${count === 0 ? 'disabled' : ''}
                     value="${name}">
                   <label class="trip-filters__filter-label" for="filter-${name}">${name} ${count}</label>
                 </div>`;
@@ -42,13 +42,13 @@ export default class Filters extends AbstractView {
     return createFiltersTemplate(this._filters, this._currentFilterType);
   }
 
-  _filterTypeChangeHandler(evt) {
-    evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.value);
-  }
-
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
     this.getElement().addEventListener('change', this._filterTypeChangeHandler);
+  }
+
+  _filterTypeChangeHandler(evt) {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.value);
   }
 }

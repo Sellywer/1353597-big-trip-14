@@ -8,6 +8,7 @@ const MIN_DAYSTO_GAP = 1;
 const HOURS_GAP = 24;
 const MIN_MINUTES_GAP = 10;
 const MAX_MINUTES_GAP = 60;
+const MIN_TITLE_LENGTH = 3;
 
 export const getDuration = (dateFrom, dateTo) => {
   const startTime = new Date(dateFrom).getTime();
@@ -97,19 +98,6 @@ export const getDateTo = (dateFrom) => {
   return dateTo;
 };
 
-export const getTripDates = (points) => {
-  const firstPoint = points[0];
-  const lastIndex = points.length - 1;
-  const lastPoint = points[lastIndex];
-  const startingMonth = dayjs(firstPoint.dateFrom).month();
-  const endingMonth = dayjs(lastPoint.dateTo).month();
-
-  if (startingMonth === endingMonth) {
-    return `${getEventDateFormat(firstPoint.dateFrom)} &mdash; ${getDayFormat(lastPoint.dateTo)}`;
-  }
-  return `${getEventDateFormat(firstPoint.dateFrom)} &mdash; ${getEventDateFormat(lastPoint.dateTo)}`;
-};
-
 export const getDateFormat = (date) => {
   return dayjs(date).format('YYYY-MM-DD');
 };
@@ -157,4 +145,41 @@ export const sortByDate = (pointA, pointB) => {
 
 export const isDatesEqual = (dateA, dateB) => {
   return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
+};
+
+export const getAllTripDates = (events) => {
+  const firstEvent = events[0];
+  const lastIndex = events.length - 1;
+  const lastEvent = events[lastIndex];
+  const startingMonth = dayjs(firstEvent.dateFrom).month();
+  const endingMonth = dayjs(lastEvent.dateTo).month();
+  const start = getEventDateFormat(firstEvent.dateFrom);
+  const end = startingMonth === endingMonth ? getDayFormat(lastEvent.dateTo) : getEventDateFormat(lastEvent.dateTo);
+
+  return `${start} &mdash; ${end}`;
+};
+
+const removeDuplEventsNames = (events) => {
+  const unduplicatedEventsNames = [events[0].destination.name];
+
+  for (let i = 0; i < events.length - 1; i++) {
+    const current = events[i].destination.name;
+    const next = events[i + 1].destination.name;
+
+    if (next !== current) {
+      unduplicatedEventsNames.push(next);
+    }
+  }
+  return unduplicatedEventsNames;
+};
+
+export const getRouteEventsTitle = (events) => {
+  const routeTitle = removeDuplEventsNames(events);
+  const lastEvent = routeTitle.slice([routeTitle.length - 1]);
+
+  if (routeTitle.length > MIN_TITLE_LENGTH) {
+    return `${routeTitle.slice(0, MIN_TITLE_LENGTH - 1).join(' &mdash; ')}
+    &mdash; . . . &mdash; ${lastEvent.join(' &mdash; ')}`;
+  }
+  return routeTitle.join(' &mdash; ');
 };
