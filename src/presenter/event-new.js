@@ -2,7 +2,6 @@ import EventEditView from '../view/new-event';
 import {render, RenderPosition, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
 
-
 const BLANK_EVENT = {
   dateFrom: new Date(),
   dateTo: new Date(),

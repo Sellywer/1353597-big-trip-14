@@ -19,16 +19,6 @@ export default class SiteMenu extends AbstractView {
     return createSiteMenuTemplate();
   }
 
-  _menuClickHandler(evt) {
-    evt.preventDefault();
-
-    if (evt.target.classList.contains('trip-tabs__btn--active')) {
-
-      return;
-    }
-    this._callback.menuClick(evt.target.dataset.menuType);
-  }
-
   setMenuClickHandler(callback) {
     this._callback.menuClick = callback;
     this.getElement().addEventListener('click', this._menuClickHandler);
@@ -44,5 +34,15 @@ export default class SiteMenu extends AbstractView {
         item.classList.remove('trip-tabs__btn--active');
       }
     });
+  }
+
+  _menuClickHandler(evt) {
+    evt.preventDefault();
+
+    if (evt.target.classList.contains('trip-tabs__btn--active')) {
+
+      return;
+    }
+    this._callback.menuClick(evt.target.dataset.menuType);
   }
 }

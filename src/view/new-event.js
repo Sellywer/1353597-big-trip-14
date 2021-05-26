@@ -150,7 +150,6 @@ export default class EditEvent extends SmartView  {
     this._destinations = destinations;
     this._availableOffers = availableOffers;
 
-
     this._dateFromPicker = null;
     this._dateToPicker = null;
 
@@ -183,6 +182,11 @@ export default class EditEvent extends SmartView  {
   setCloseClickHandler(callback) {
     this._callback.closeClick = callback;
     this.getElement().querySelector('.event__rollup-btn--close').addEventListener('click', this._closeClickHandler);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   restoreHandlers() {
@@ -237,6 +241,7 @@ export default class EditEvent extends SmartView  {
         basePrice: parseInt(price, 10),
       }, true);
   }
+
   _offersSelectorClickHandler(evt) {
     evt.preventDefault;
     const target = evt.target.closest('input');
@@ -364,11 +369,6 @@ export default class EditEvent extends SmartView  {
   _formDeleteClickHandler(evt) {
     evt.preventDefault();
     this._callback.deleteClick(EditEvent.parseDataToEvent(this._data));
-  }
-
-  setDeleteClickHandler(callback) {
-    this._callback.deleteClick = callback;
-    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   _closeClickHandler(evt) {

@@ -8,7 +8,6 @@ import EventPresenter, {State as EventPresenterViewState} from './events';
 import EventNewPresenter from './event-new';
 
 import {filter} from '../utils/filter';
-
 import {render, RenderPosition, remove} from '../utils/render';
 import {sortByTime, sortByPrice, sortByDate} from '../utils/event';
 import {SortType, UpdateType, UserAction} from '../utils/const';
@@ -37,14 +36,12 @@ export default class BoardPresenter  {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-
-    this._EventNewPresenter = new EventNewPresenter(this._tripListComponent, this._handleViewAction, this._offersModel, this._destinationsModel);
+    this._eventNewPresenter = new EventNewPresenter(this._tripListComponent, this._handleViewAction, this._offersModel, this._destinationsModel);
   }
 
   init() {
     render(this._boardContainer, this._boardComponent, RenderPosition.BEFOREEND);
     render(this._boardComponent, this._tripListComponent, RenderPosition.BEFOREEND);
-
 
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -67,7 +64,7 @@ export default class BoardPresenter  {
 
   createEvent(callback) {
     this._currentSortType = SortType.DEFAULT;
-    this._EventNewPresenter.init(callback);
+    this._eventNewPresenter.init(callback);
   }
 
   _handleViewAction(actionType, updateType, update) {
@@ -83,13 +80,13 @@ export default class BoardPresenter  {
           });
         break;
       case UserAction.ADD_EVENT:
-        this._EventNewPresenter.setSaving();
+        this._eventNewPresenter.setSaving();
         this._api.addNewEvent(update)
           .then((response) => {
             this._eventsModel.addEvent(updateType, response);
           })
           .catch(() => {
-            this._EventNewPresenter.setAborting();
+            this._eventNewPresenter.setAborting();
           });
         break;
       case UserAction.DELETE_EVENT:
@@ -127,7 +124,7 @@ export default class BoardPresenter  {
   }
 
   _handleModeChange() {
-    this._EventNewPresenter.destroy();
+    this._eventNewPresenter.destroy();
 
     Object
       .values(this._eventPresenter)
@@ -142,17 +139,6 @@ export default class BoardPresenter  {
 
     this._clearBoard();
     this._renderBoard();
-  }
-
-  _renderSort() {
-    if (this._sortComponent !== null) {
-      this._sortComponent = null;
-    }
-
-    this._sortComponent = new SortView(this._currentSortType);
-
-    render(this._boardComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _getEvents() {
@@ -170,6 +156,17 @@ export default class BoardPresenter  {
     }
 
     return filtredEvents;
+  }
+
+  _renderSort() {
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType);
+
+    render(this._boardComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderLoading() {
@@ -192,23 +189,6 @@ export default class BoardPresenter  {
     this._getEvents().map((event) => this._renderEvent(event, this._offersModel.getOffers(), this._destinationsModel.getDestinations()));
   }
 
-  _clearBoard({resetSortType = false} = {}) {
-    this._EventNewPresenter.destroy();
-
-    Object
-      .values(this._eventPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._eventPresenter = {};
-
-    remove(this._sortComponent);
-    remove(this._noEventComponent);
-    remove(this._loadingComponent);
-
-    if (resetSortType) {
-      this._currentSortType = SortType.DEFAULT;
-    }
-  }
-
   _renderNoEvents() {
     render(this._boardComponent, this._noEventComponent, RenderPosition.BEFOREEND);
   }
@@ -227,5 +207,22 @@ export default class BoardPresenter  {
 
     this._renderSort();
     this._renderEvents(this._getEvents);
+  }
+
+  _clearBoard({resetSortType = false} = {}) {
+    this._eventNewPresenter.destroy();
+
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._eventPresenter = {};
+
+    remove(this._sortComponent);
+    remove(this._noEventComponent);
+    remove(this._loadingComponent);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
   }
 }

@@ -107,20 +107,6 @@ export default class Event {
     }
   }
 
-  _handleFavoriteClick() {
-    this._changeData(
-      UserAction.UPDATE_EVENT,
-      UpdateType.PATCH,
-      Object.assign(
-        {},
-        this._event,
-        {
-          isFavorite: !this._event.isFavorite,
-        },
-      ),
-    );
-  }
-
   _replaceCardToForm() {
     replace(this._eventEditComponent, this._eventComponent);
     document.addEventListener('keydown', this._escKeyDownHandler);
@@ -162,7 +148,6 @@ export default class Event {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    // this._replaceFormToCard();
   }
 
   _handleDeleteEditClick(event) {
@@ -170,6 +155,20 @@ export default class Event {
       UserAction.DELETE_EVENT,
       UpdateType.MINOR,
       event,
+    );
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._event,
+        {
+          isFavorite: !this._event.isFavorite,
+        },
+      ),
     );
   }
 }

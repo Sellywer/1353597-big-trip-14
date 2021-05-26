@@ -257,12 +257,12 @@ export default class Statistics extends SmartView {
     this._setCharts();
   }
 
-  removeElement() {
-    super.removeElement();
-  }
-
   getTemplate() {
     return createStatisticsTemplate();
+  }
+
+  removeElement() {
+    super.removeElement();
   }
 
   restoreHandlers() {

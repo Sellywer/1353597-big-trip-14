@@ -20,8 +20,6 @@ const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 let statisticsComponent = null;
 
 const mainElement = document.querySelector('.page-body');
-const siteMenuComponent = new SiteMenuView();
-
 const siteMainElement = document.querySelector('.trip-main');
 const siteHeaderElement = siteMainElement.querySelector('.trip-controls__navigation');
 const siteFilterElement = siteMainElement.querySelector('.trip-controls__filters');
@@ -29,6 +27,8 @@ const boardContainer = mainElement.querySelector('.board-container');
 const addNewEventButton = document.querySelector('.trip-main__event-add-btn');
 
 const api = new Api(END_POINT, AUTHORIZATION);
+
+const siteMenuComponent = new SiteMenuView();
 
 const eventsModel = new EventsModel();
 const filterModel = new FilterModel();
