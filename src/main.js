@@ -38,6 +38,8 @@ const destinationsModel = new DestinationsModel();
 const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel, offersModel, destinationsModel);
 
+addNewEventButton.disabled = true;
+
 const handleSiteMenuClick = (menuItem) => {
   siteMenuComponent.setMenuItem(menuItem);
 
@@ -86,6 +88,7 @@ Promise.all([
   render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   filterPresenter.init();
+  addNewEventButton.disabled = false;
 })
   .catch(() => {
     offersModel.setOffers([]);

@@ -1,5 +1,4 @@
 import EventEditView from '../view/new-event';
-import {nanoid} from 'nanoid';
 import {render, RenderPosition, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
 
@@ -81,7 +80,7 @@ export default class EventNew {
     this._changeData(
       UserAction.ADD_EVENT,
       UpdateType.MINOR,
-      Object.assign({id: nanoid()},event),
+      event,
     );
     this.destroy();
   }
