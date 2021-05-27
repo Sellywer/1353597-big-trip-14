@@ -30,10 +30,11 @@ export default class Event {
     this._handleDeleteEditClick = this._handleDeleteEditClick.bind(this);
   }
 
-  init(event, offers, destinations) {
+  init(event, offers, destinations, mode) {
     this._event = event;
     this._offers = offers;
     this._destinations = destinations;
+    this.mode = mode;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;

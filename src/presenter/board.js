@@ -10,7 +10,7 @@ import EventNewPresenter from './event-new';
 import {filter} from '../utils/filter';
 import {render, RenderPosition, remove} from '../utils/render';
 import {sortByTime, sortByPrice, sortByDate} from '../utils/event';
-import {SortType, UpdateType, UserAction} from '../utils/const';
+import {SortType, UpdateType, UserAction, Mode} from '../utils/const';
 
 export default class BoardPresenter  {
   constructor(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api) {
@@ -105,7 +105,7 @@ export default class BoardPresenter  {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._eventPresenter[data.id].init(data, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
+        this._eventPresenter[data.id].init(data, this._offersModel.getOffers(), this._destinationsModel.getDestinations(), Mode.EDITING);
         break;
       case UpdateType.MINOR:
         this._clearBoard();
