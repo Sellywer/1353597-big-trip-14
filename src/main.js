@@ -1,5 +1,5 @@
 import SiteMenuView from './view/site-menu';
-import InfoMainView from './view/info-main';
+// import InfoMainView from './view/info-main';
 import StatisticsView from './view/statistics.js';
 import EventsModel from './model/events';
 import FilterModel from './model/filter';
@@ -14,7 +14,7 @@ import {MenuItem, UpdateType, FilterType} from './utils/const';
 
 import Api from './api.js';
 
-const AUTHORIZATION = 'Basic cbym40thgjvbljh16';
+const AUTHORIZATION = 'Basic cbfym40thgjvbljh16';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 let statisticsComponent = null;
@@ -84,7 +84,7 @@ Promise.all([
   destinationsModel.setDestinations(destinations);
   eventsModel.setEvents(UpdateType.INIT, events);
 
-  render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
+  // render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
   render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   filterPresenter.init();
@@ -94,7 +94,7 @@ Promise.all([
     offersModel.setOffers([]);
     destinationsModel.setDestinations([]);
     eventsModel.setEvents(UpdateType.INIT, []);
-    render(siteMainElement, new InfoMainView(), RenderPosition.AFTERBEGIN);
+    // render(siteMainElement, new InfoMainView(), RenderPosition.AFTERBEGIN);
     render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   });
