@@ -1,5 +1,4 @@
 import SiteMenuView from './view/site-menu';
-// import InfoMainView from './view/info-main';
 import StatisticsView from './view/statistics.js';
 import EventsModel from './model/events';
 import FilterModel from './model/filter';
@@ -86,7 +85,6 @@ Promise.all([
   destinationsModel.setDestinations(destinations);
   eventsModel.setEvents(UpdateType.INIT, events);
   infoPresenter.init();
-  // render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
   render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   filterPresenter.init();
@@ -96,7 +94,6 @@ Promise.all([
     offersModel.setOffers([]);
     destinationsModel.setDestinations([]);
     eventsModel.setEvents(UpdateType.INIT, []);
-    // render(siteMainElement, new InfoMainView(), RenderPosition.AFTERBEGIN);
     render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   });
