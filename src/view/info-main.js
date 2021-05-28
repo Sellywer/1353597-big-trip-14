@@ -19,6 +19,7 @@ export default class InfoMain extends AbstractView {
   constructor(events) {
     super();
     this._events = events;
+    this._element = null;
   }
 
   getTemplate() {

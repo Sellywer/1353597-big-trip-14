@@ -8,6 +8,7 @@ import OffersModel from './model/offers';
 
 import BoardPresenter  from './presenter/board';
 import FilterPresenter from './presenter/filter';
+import InfoPresenter from './presenter/info-presenter';
 
 import {render, remove, RenderPosition} from './utils/render';
 import {MenuItem, UpdateType, FilterType} from './utils/const';
@@ -37,6 +38,7 @@ const destinationsModel = new DestinationsModel();
 
 const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel, offersModel, destinationsModel);
+const infoPresenter = new InfoPresenter(siteMainElement, eventsModel);
 
 addNewEventButton.disabled = true;
 
@@ -83,7 +85,7 @@ Promise.all([
   offersModel.setOffers(offers);
   destinationsModel.setDestinations(destinations);
   eventsModel.setEvents(UpdateType.INIT, events);
-
+  infoPresenter.init();
   // render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
   render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
