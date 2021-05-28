@@ -8,7 +8,7 @@ const MIN_DAYSTO_GAP = 1;
 const HOURS_GAP = 24;
 const MIN_MINUTES_GAP = 10;
 const MAX_MINUTES_GAP = 60;
-// const MIN_TITLE_LENGTH = 3;
+const MIN_TITLE_LENGTH = 3;
 
 export const getDuration = (dateFrom, dateTo) => {
   const startTime = new Date(dateFrom).getTime();
@@ -124,7 +124,13 @@ export const isExpiredEvent = (point) => {
 
 export const createTotalPrice = (events) => {
   let price = 0;
-  events.forEach((item) => price += item.basePrice);
+  events.forEach((item) => {
+    price += +item.basePrice;
+
+    item.offers.forEach((item) => {
+      price += item.price;
+    });
+  });
   return price;
 };
 
@@ -147,39 +153,39 @@ export const isDatesEqual = (dateA, dateB) => {
   return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
 };
 
-// export const getAllTripDates = (events) => {
-//   const firstEvent = events[0];
-//   const lastIndex = events.length - 1;
-//   const lastEvent = events[lastIndex];
-//   const startingMonth = dayjs(firstEvent.dateFrom).month();
-//   const endingMonth = dayjs(lastEvent.dateTo).month();
-//   const start = getEventDateFormat(firstEvent.dateFrom);
-//   const end = startingMonth === endingMonth ? getDayFormat(lastEvent.dateTo) : getEventDateFormat(lastEvent.dateTo);
+export const getAllTripDates = (events) => {
+  const firstEvent = events[0];
+  const lastIndex = events.length - 1;
+  const lastEvent = events[lastIndex];
+  const startingMonth = dayjs(firstEvent.dateFrom).month();
+  const endingMonth = dayjs(lastEvent.dateTo).month();
+  const start = getEventDateFormat(firstEvent.dateFrom);
+  const end = startingMonth === endingMonth ? getDayFormat(lastEvent.dateTo) : getEventDateFormat(lastEvent.dateTo);
 
-//   return `${start} &mdash; ${end}`;
-// };
+  return `${start} &mdash; ${end}`;
+};
 
-// const removeDuplEventsNames = (events) => {
-//   const unduplicatedEventsNames = [events[0].destination.name];
+const removeDuplEventsNames = (events) => {
+  const unduplicatedEventsNames = [events[0].destination.name];
 
-//   for (let i = 0; i < events.length - 1; i++) {
-//     const current = events[i].destination.name;
-//     const next = events[i + 1].destination.name;
+  for (let i = 0; i < events.length - 1; i++) {
+    const current = events[i].destination.name;
+    const next = events[i + 1].destination.name;
 
-//     if (next !== current) {
-//       unduplicatedEventsNames.push(next);
-//     }
-//   }
-//   return unduplicatedEventsNames;
-// };
+    if (next !== current) {
+      unduplicatedEventsNames.push(next);
+    }
+  }
+  return unduplicatedEventsNames;
+};
 
-// export const getRouteEventsTitle = (events) => {
-//   const routeTitle = removeDuplEventsNames(events);
-//   const lastEvent = routeTitle.slice([routeTitle.length - 1]);
+export const getRouteEventsTitle = (events) => {
+  const routeTitle = removeDuplEventsNames(events);
+  const lastEvent = routeTitle.slice([routeTitle.length - 1]);
 
-//   if (routeTitle.length > MIN_TITLE_LENGTH) {
-//     return `${routeTitle.slice(0, MIN_TITLE_LENGTH - 1).join(' &mdash; ')}
-//     &mdash; . . . &mdash; ${lastEvent.join(' &mdash; ')}`;
-//   }
-//   return routeTitle.join(' &mdash; ');
-// };
+  if (routeTitle.length > MIN_TITLE_LENGTH) {
+    return `${routeTitle.slice(0, MIN_TITLE_LENGTH - 1).join(' &mdash; ')}
+    &mdash; . . . &mdash; ${lastEvent.join(' &mdash; ')}`;
+  }
+  return routeTitle.join(' &mdash; ');
+};
