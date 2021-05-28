@@ -5,13 +5,14 @@ import {render, RenderPosition, replace, remove} from '../utils/render';
 import {UserAction, UpdateType, Mode, State} from '../utils/const';
 import {isDatesEqual} from '../utils/event';
 
-
 export default class Event {
-  constructor(eventListContainer, changeData, changeMode) {
+  constructor(eventListContainer, changeData, changeMode, offers, destinations) {
 
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._offers = offers;
+    this._destinations = destinations;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -30,17 +31,14 @@ export default class Event {
     this._handleDeleteEditClick = this._handleDeleteEditClick.bind(this);
   }
 
-  init(event, offers, destinations, mode) {
+  init(event, offers, destinations) {
     this._event = event;
-    this._offers = offers;
-    this._destinations = destinations;
-    this.mode = mode;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
-    this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event, offers, destinations);
+    this._eventComponent = new EventView(this._event);
+    this._eventEditComponent = new EventEditView(this._event, offers, destinations);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -60,7 +58,7 @@ export default class Event {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._eventEditComponent, prevEventEditComponent);
+      replace(this._eventComponent, prevEventEditComponent);
       this._mode = Mode.DEFAULT;
     }
 
@@ -140,8 +138,8 @@ export default class Event {
   }
 
   _handleFormSubmit(update) {
-    const isMinorUpdate = !isDatesEqual(this._event.dateFrom, update.dateFrom);
-
+    const isMinorUpdate =
+    !isDatesEqual(this._event.dateFrom, update.dateFrom) ||
     this._event.basePrice !== update.basePrice;
 
     this._changeData(
