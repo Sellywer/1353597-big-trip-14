@@ -8,20 +8,18 @@ import {countPointsByTripType, getCostsByTripType, getDurationByType, getItemsUn
 const BAR_HEIGHT = 55;
 
 
-const renderMoneyChart = (moneyCtx, points) => {
-  const pointsTypes = points.map((point) => point.type);
-  const uniqTypes = getItemsUniq(pointsTypes);
-  const moneyByTypes = uniqTypes.map((type) => getCostsByTripType(points, type));
+const renderMoneyChart = (moneyCtx, points, uniqTypes) => {
 
-  moneyCtx.height = uniqTypes.length * BAR_HEIGHT;
+  const moneyByTypes = uniqTypes.map((type) => getCostsByTripType(points, type));
+  const sortable = moneyByTypes.sort((a, b) => (a.price < b.price) ? 1 : -1);
 
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqTypes,
+      labels: sortable.map((obj) => obj.type.toUpperCase()),
       datasets: [{
-        data: moneyByTypes,
+        data: sortable.map((obj) => obj.price),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -52,7 +50,6 @@ const renderMoneyChart = (moneyCtx, points) => {
             fontColor: '#000000',
             padding: 5,
             fontSize: 13,
-            callback: (val) => `${val.toUpperCase()}`,
           },
           gridLines: {
             display: false,
@@ -82,20 +79,18 @@ const renderMoneyChart = (moneyCtx, points) => {
   });
 };
 
-const renderTypeChart = (typeCtx, points) => {
-  const pointsTypes = points.map((point) => point.type);
-  const uniqTypes = getItemsUniq(pointsTypes);
-  const eventsByTypeCounts = uniqTypes.map((type) => countPointsByTripType(points, type));
+const renderTypeChart = (typeCtx, points, uniqTypes) => {
 
-  typeCtx.height = uniqTypes.length * BAR_HEIGHT;
+  const eventsByTypeCounts = uniqTypes.map((type) => countPointsByTripType(points, type));
+  const sortable = eventsByTypeCounts.sort((a, b) => (a.pointsCount < b.pointsCount) ? 1 : -1);
 
   return new Chart(typeCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqTypes,
+      labels: sortable.map((obj) => obj.type.toUpperCase()),
       datasets: [{
-        data: eventsByTypeCounts,
+        data: sortable.map((obj) => obj.pointsCount),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -126,7 +121,6 @@ const renderTypeChart = (typeCtx, points) => {
             fontColor: '#000000',
             padding: 5,
             fontSize: 13,
-            callback: (val) => `${val.toUpperCase()}`,
           },
           gridLines: {
             display: false,
@@ -156,20 +150,18 @@ const renderTypeChart = (typeCtx, points) => {
   });
 };
 
-const renderTimeChart = (timeCtx,points) => {
-  const eventTypes = points.map((point) => point.type);
-  const uniqTypes = getItemsUniq(eventTypes);
-  const durationsByTripTypes = uniqTypes.map((type) => getDurationByType(points, type));
+const renderTimeChart = (timeCtx, points, uniqTypes) => {
 
-  timeCtx.height = uniqTypes.length * BAR_HEIGHT;
+  const minutesByType = uniqTypes.map((type) => getDurationByType(points, type));
+  const sortable = minutesByType.sort((a, b) => (a.duration < b.duration) ? 1 : -1);
 
   return new Chart(timeCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqTypes,
+      labels: sortable.map((obj) => obj.type.toUpperCase()),
       datasets: [{
-        data: durationsByTripTypes,
+        data: sortable.map((obj) => obj.duration),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -200,7 +192,6 @@ const renderTimeChart = (timeCtx,points) => {
             fontColor: '#000000',
             padding: 5,
             fontSize: 13,
-            callback: (val) => `${val.toUpperCase()}`,
           },
           gridLines: {
             display: false,
@@ -249,7 +240,7 @@ export default class Statistics extends SmartView {
   constructor(points) {
     super();
 
-    this._points = points;
+    this._points = {points};
     this._moneyChart = null;
     this._typeChart = null;
     this._timeChart = null;
@@ -275,13 +266,18 @@ export default class Statistics extends SmartView {
       this._typeChart = null;
       this._timeChart = null;
     }
-
+    const {points} = this._points;
     const moneyCtx = this.getElement().querySelector('.statistics__chart--money');
     const typeCtx = this.getElement().querySelector('.statistics__chart--transport');
     const timeCtx = this.getElement().querySelector('.statistics__chart--time');
 
-    this._moneyChart = renderMoneyChart(moneyCtx, this._points);
-    this._typeChart = renderTypeChart(typeCtx, this._points);
-    this._timeChart = renderTimeChart(timeCtx, this._points);
+    const pointsTypes = points.map((point) => point.type);
+    const uniqTypes = getItemsUniq(pointsTypes);
+
+    moneyCtx.height = uniqTypes.length * BAR_HEIGHT;
+
+    this._moneyChart = renderMoneyChart(moneyCtx, this._points, uniqTypes);
+    this._typeChart = renderTypeChart(typeCtx, this._points, uniqTypes);
+    this._timeChart = renderTimeChart(timeCtx, this._points, uniqTypes);
   }
 }

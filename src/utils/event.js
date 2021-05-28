@@ -124,7 +124,13 @@ export const isExpiredEvent = (point) => {
 
 export const createTotalPrice = (events) => {
   let price = 0;
-  events.forEach((item) => price += item.basePrice);
+  events.forEach((item) => {
+    price += +item.basePrice;
+
+    item.offers.forEach((item) => {
+      price += item.price;
+    });
+  });
   return price;
 };
 

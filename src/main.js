@@ -1,5 +1,4 @@
 import SiteMenuView from './view/site-menu';
-import InfoMainView from './view/info-main';
 import StatisticsView from './view/statistics.js';
 import EventsModel from './model/events';
 import FilterModel from './model/filter';
@@ -8,13 +7,14 @@ import OffersModel from './model/offers';
 
 import BoardPresenter  from './presenter/board';
 import FilterPresenter from './presenter/filter';
+import InfoPresenter from './presenter/info-presenter';
 
 import {render, remove, RenderPosition} from './utils/render';
 import {MenuItem, UpdateType, FilterType} from './utils/const';
 
 import Api from './api.js';
 
-const AUTHORIZATION = 'Basic cbym40thgjvbljh16';
+const AUTHORIZATION = 'Basic Sellywer2114';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 let statisticsComponent = null;
@@ -37,6 +37,7 @@ const destinationsModel = new DestinationsModel();
 
 const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel, offersModel, destinationsModel);
+const infoPresenter = new InfoPresenter(siteMainElement, eventsModel);
 
 addNewEventButton.disabled = true;
 
@@ -83,8 +84,7 @@ Promise.all([
   offersModel.setOffers(offers);
   destinationsModel.setDestinations(destinations);
   eventsModel.setEvents(UpdateType.INIT, events);
-
-  render(siteMainElement, new InfoMainView(events), RenderPosition.AFTERBEGIN);
+  infoPresenter.init();
   render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   filterPresenter.init();
@@ -94,7 +94,6 @@ Promise.all([
     offersModel.setOffers([]);
     destinationsModel.setDestinations([]);
     eventsModel.setEvents(UpdateType.INIT, []);
-    render(siteMainElement, new InfoMainView(), RenderPosition.AFTERBEGIN);
     render(siteHeaderElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   });
