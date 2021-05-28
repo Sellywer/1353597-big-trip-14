@@ -14,7 +14,7 @@ import {MenuItem, UpdateType, FilterType} from './utils/const';
 
 import Api from './api.js';
 
-const AUTHORIZATION = 'Basic cbfym40thgjvbljh16';
+const AUTHORIZATION = 'Basic Sellywer2114';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 let statisticsComponent = null;
