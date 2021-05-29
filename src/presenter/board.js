@@ -11,6 +11,7 @@ import {filter} from '../utils/filter';
 import {render, RenderPosition, remove} from '../utils/render';
 import {sortByTime, sortByPrice, sortByDate} from '../utils/event';
 import {SortType, UpdateType, UserAction} from '../utils/const';
+import {isArrayEmpty} from '../utils/common.js';
 
 export default class BoardPresenter  {
   constructor(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api) {
@@ -200,7 +201,7 @@ export default class BoardPresenter  {
       return;
     }
 
-    if (this._getEvents().length === 0) {
+    if (!isArrayEmpty(this._getEvents())) {
       this._renderNoEvents();
       return;
     }

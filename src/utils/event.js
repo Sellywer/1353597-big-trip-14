@@ -1,13 +1,15 @@
 import dayjs from 'dayjs';
 import {getRandomInteger} from './common';
 
+const MILLISECONDS = 1000;
 const MAX_MONTHS_GAP = 6;
 const MIN_DAYS_GAP = -10;
 const MAX_DAYS_GAP = 7;
 const MIN_DAYSTO_GAP = 1;
-const HOURS_GAP = 24;
-const MIN_MINUTES_GAP = 10;
-const MAX_MINUTES_GAP = 60;
+const DAYS = 30;
+const HOURS = 24;
+const MIN_MINUTES = 10;
+const MAX_MINUTES = 60;
 const MIN_TITLE_LENGTH = 3;
 
 export const getDuration = (dateFrom, dateTo) => {
@@ -18,9 +20,9 @@ export const getDuration = (dateFrom, dateTo) => {
 };
 
 export const humanDurationFormat = (duration) => {
-  let minutes = Math.floor((duration / (1000 * 60)) % 60);
-  let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-  let days = Math.floor((duration / (1000 * 60 * 60 * 24)) % 30);
+  let minutes = Math.floor((duration / (MILLISECONDS * MAX_MINUTES)) % MAX_MINUTES);
+  let hours = Math.floor((duration / (MILLISECONDS * MAX_MINUTES * MAX_MINUTES)) % HOURS);
+  let days = Math.floor((duration / (MILLISECONDS * MAX_MINUTES * MAX_MINUTES * HOURS)) % DAYS);
 
   days = (days < 10) ? '0' + days : days;
   hours = (hours < 10) ? '0' + hours : hours;
@@ -30,15 +32,14 @@ export const humanDurationFormat = (duration) => {
     return `${days}D ${hours}H ${minutes}M`;
   } else if (days === '00' && hours !== '00') {
     return `${hours}H ${minutes}M`;
-  } else {
-    return `${minutes}M`;
   }
+  return `${minutes}M`;
 };
 
 const humanizeDuration = (minuteDuration, hoursDuration, daysDuration) => {
-  const huminizedDays = daysDuration < 10 ? '0' + daysDuration : daysDuration;
-  const humanizedHours = (hoursDuration - daysDuration * 24) < 10 ? '0' + (hoursDuration - daysDuration * 24) : hoursDuration - daysDuration * 24;
-  const humanizedMinutes = (minuteDuration - hoursDuration * 60) < 10 ? '0' + (minuteDuration - hoursDuration * 60) : minuteDuration -hoursDuration * 60;
+  const huminizedDays = daysDuration < MIN_MINUTES ? '0' + daysDuration : daysDuration;
+  const humanizedHours = (hoursDuration - daysDuration * HOURS) < MIN_MINUTES ? '0' + (hoursDuration - daysDuration * HOURS) : hoursDuration - daysDuration * HOURS;
+  const humanizedMinutes = (minuteDuration - hoursDuration * MAX_MINUTES) < MIN_MINUTES ? '0' + (minuteDuration - hoursDuration * MAX_MINUTES) : minuteDuration -hoursDuration * MAX_MINUTES;
 
   if (daysDuration > 0) {
     return `${huminizedDays}D ${humanizedHours}H ${humanizedMinutes}M`;
@@ -53,8 +54,8 @@ const humanizeDuration = (minuteDuration, hoursDuration, daysDuration) => {
 
 export const humanizeTotalDuration = (duration) => {
   const minuteDuration = duration;
-  const hoursDuration = Math.floor(duration / 60);
-  const daysDuration =  Math.floor(hoursDuration /24);
+  const hoursDuration = Math.floor(duration / MAX_MINUTES);
+  const daysDuration =  Math.floor(hoursDuration /HOURS);
 
   return humanizeDuration(minuteDuration, hoursDuration, daysDuration);
 };
@@ -73,17 +74,16 @@ export const getPointDateFromToFormat = (dateFrom, dateTo) => {
 
   if (dateTo - dateFrom >= 1) {
     return 'MM/D HH:mm';
-  } else {
-    return 'HH:mm';
   }
+  return 'HH:mm';
 };
 
 export const getDateFrom = () => {
   const dateFrom = dayjs()
     .add(getRandomInteger(0, MAX_MONTHS_GAP), 'M')
     .add(getRandomInteger(MIN_DAYS_GAP, MAX_DAYS_GAP), 'd')
-    .add(getRandomInteger(0, HOURS_GAP), 'h')
-    .add(getRandomInteger(0, MAX_MINUTES_GAP), 'm')
+    .add(getRandomInteger(0, HOURS), 'h')
+    .add(getRandomInteger(0, MAX_MINUTES), 'm')
     .format('YYYY-MM-DDTHH:mm');
   return dateFrom;
 };
@@ -91,8 +91,8 @@ export const getDateFrom = () => {
 export const getDateTo = (dateFrom) => {
   const dateTo = dayjs(dateFrom)
     .add(getRandomInteger(0, MIN_DAYSTO_GAP), 'd')
-    .add(getRandomInteger(0, HOURS_GAP), 'h')
-    .add(getRandomInteger(MIN_MINUTES_GAP, MAX_MINUTES_GAP), 'm')
+    .add(getRandomInteger(0, HOURS), 'h')
+    .add(getRandomInteger(MIN_MINUTES, MAX_MINUTES), 'm')
     .format('YYYY-MM-DDTHH:mm');
 
   return dateTo;
