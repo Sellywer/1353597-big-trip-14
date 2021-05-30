@@ -59,7 +59,7 @@ self.addEventListener('activate', (evt) => {
   );
 });
 
-const handleFetch = (evt) => {
+const interceptEventHandler = (evt) => {
   const {request} = evt;
 
   evt.respondWith(
@@ -83,4 +83,4 @@ const handleFetch = (evt) => {
   );
 };
 
-self.addEventListener('fetch', handleFetch);
+self.addEventListener('fetch', interceptEventHandler);
