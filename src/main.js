@@ -133,5 +133,6 @@ window.addEventListener('online', () => {
 });
 
 window.addEventListener('offline', () => {
+  toast(OfflineMessage.DISCONNECT);
   document.title += ' [offline]';
 });
