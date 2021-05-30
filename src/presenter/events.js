@@ -2,8 +2,10 @@ import EventView from '../view/event';
 import EventEditView from '../view/edit-event';
 
 import {render, RenderPosition, replace, remove} from '../utils/render';
-import {UserAction, UpdateType, Mode, State} from '../utils/const';
+import {UserAction, UpdateType, Mode, State, OfflineMessage} from '../utils/const';
 import {isDatesEqual} from '../utils/event';
+import {isOnline} from '../utils/common.js';
+import {toast} from '../utils/toast.js';
 
 export default class Event {
   constructor(eventListContainer, changeData, changeMode, offers, destinations) {
@@ -128,6 +130,12 @@ export default class Event {
   }
 
   _handleEditClick() {
+    if (!isOnline()) {
+      toast(OfflineMessage.EDIT_EVENT);
+      this.setViewState(State.ABORTING);
+      return;
+    }
+
     this._replaceCardToForm();
   }
 
@@ -138,6 +146,12 @@ export default class Event {
   }
 
   _handleFormSubmit(update) {
+    if (!isOnline()) {
+      toast(OfflineMessage.SAVE_EVENT);
+      this.setViewState(State.ABORTING);
+      return;
+    }
+
     const isMinorUpdate =
     !isDatesEqual(this._event.dateFrom, update.dateFrom) ||
     this._event.basePrice !== update.basePrice;
@@ -150,6 +164,12 @@ export default class Event {
   }
 
   _handleDeleteEditClick(event) {
+    if (!isOnline()) {
+      toast(OfflineMessage.DELETE_EVENT);
+      this.setViewState(State.ABORTING);
+      return;
+    }
+
     this._changeData(
       UserAction.DELETE_EVENT,
       UpdateType.MINOR,

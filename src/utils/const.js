@@ -38,3 +38,12 @@ export const MenuItem = {
   TABLE: 'TABLE',
   STATISTICS: 'STATISTICS',
 };
+
+export const OfflineMessage = {
+  NEW_EVENT: 'You can\'t create new event offline',
+  DISCONNECT: 'Lost internet connection',
+  SAVE_EVENT: 'You can\'t save event offline',
+  DELETE_EVENT: 'You can\'t delete event offline',
+  EDIT_EVENT: 'You can\'t edit event offline',
+  RECONNECT: 'Connection restored',
+};

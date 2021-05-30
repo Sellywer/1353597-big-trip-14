@@ -1,5 +1,5 @@
 import {getFormDateFormat} from '../utils/event';
-import {firstLetterCaps, isArrayEmpty} from '../utils/common.js';
+import {uppercaseFirstLetter, isArrayEmpty} from '../utils/common.js';
 import SmartView from './smart';
 
 import dayjs from 'dayjs';
@@ -12,7 +12,7 @@ import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 const FLATPICKR_SETTINGS = {
   enableTime: true,
   dateFormat: 'd/m/y H:i',
-  time_24hr: true,
+  'time_24hr': true,
 };
 
 const createDestinationsList = (destinations) => {
@@ -27,7 +27,7 @@ const createEventTypesListTemplate = (availableOffers, currentType, isDisabled) 
   const eventTypesList = eventTypes.map((type) =>
     `<div class="event__type-item">
       <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === currentType ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
-      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1" data-type="${type}">${firstLetterCaps(type)}</label>
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1" data-type="${type}">${uppercaseFirstLetter(type)}</label>
     </div>`).join('');
 
   return eventTypesList;
