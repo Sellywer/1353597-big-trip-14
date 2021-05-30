@@ -12,3 +12,7 @@ export const uppercaseFirstLetter = (str) => {
 export const isArrayEmpty = (array) => {
   return array.length === 0 ? false : true;
 };
+
+export const isOnline = () => {
+  return window.navigator.onLine;
+};

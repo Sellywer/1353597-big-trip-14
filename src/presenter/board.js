@@ -82,7 +82,7 @@ export default class BoardPresenter  {
         break;
       case UserAction.ADD_EVENT:
         this._eventNewPresenter.setSaving();
-        this._api.addNewEvent(update)
+        this._api.addEvent(update)
           .then((response) => {
             this._eventsModel.addEvent(updateType, response);
           })

@@ -11,6 +11,7 @@ const HOURS = 24;
 const MIN_MINUTES = 10;
 const MAX_MINUTES = 60;
 const MIN_TITLE_LENGTH = 3;
+const TEN_MINUTES = 10;
 
 export const getDuration = (dateFrom, dateTo) => {
   const startTime = new Date(dateFrom).getTime();
@@ -24,9 +25,9 @@ export const humanDurationFormat = (duration) => {
   let hours = Math.floor((duration / (MILLISECONDS * MAX_MINUTES * MAX_MINUTES)) % HOURS);
   let days = Math.floor((duration / (MILLISECONDS * MAX_MINUTES * MAX_MINUTES * HOURS)) % DAYS);
 
-  days = (days < 10) ? '0' + days : days;
-  hours = (hours < 10) ? '0' + hours : hours;
-  minutes = (minutes < 10) ? '0' + minutes : minutes;
+  days = (days < TEN_MINUTES) ? '0' + days : days;
+  hours = (hours < TEN_MINUTES) ? '0' + hours : hours;
+  minutes = (minutes < TEN_MINUTES) ? '0' + minutes : minutes;
 
   if (days !== '00') {
     return `${days}D ${hours}H ${minutes}M`;

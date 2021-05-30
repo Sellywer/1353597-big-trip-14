@@ -10,12 +10,25 @@ import FilterPresenter from './presenter/filter';
 import InfoPresenter from './presenter/info-presenter';
 
 import {render, remove, RenderPosition} from './utils/render';
-import {MenuItem, UpdateType, FilterType} from './utils/const';
+import {MenuItem, UpdateType, FilterType, OfflineMessage} from './utils/const';
 
-import Api from './api.js';
+import {isOnline} from './utils/common.js';
+import Store from './api/store.js';
+import Provider from './api/provider.js';
+import {toast} from './utils/toast.js';
 
-const AUTHORIZATION = 'Basic Sellywer2114';
+import Api from './api/api.js';
+
+const AUTHORIZATION = 'Basic Sellywer211405';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+const STORE_PREFIX = 'BigTrip-localstorage';
+const OFFERS_PREFIX = 'BigTrip-offers-localstorage';
+const DESTINATIONS_PREFIX = 'BigTrip-destinations-localstorage';
+
+const STORE_VER = 'v14';
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+const OFFERS_STORE_NAME = `${OFFERS_PREFIX}-${STORE_VER}`;
+const DESTINATIONS_STORE_NAME = `${DESTINATIONS_PREFIX}-${STORE_VER}`;
 
 let statisticsComponent = null;
 
@@ -27,6 +40,10 @@ const boardContainer = mainElement.querySelector('.board-container');
 const addNewEventButton = document.querySelector('.trip-main__event-add-btn');
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const offersStore = new Store(OFFERS_STORE_NAME, window.localStorage);
+const destinationsStore = new Store(DESTINATIONS_STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store, offersStore, destinationsStore);
 
 const siteMenuComponent = new SiteMenuView();
 
@@ -35,7 +52,7 @@ const filterModel = new FilterModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 
-const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, api);
+const boardPresenter = new BoardPresenter(boardContainer, eventsModel, filterModel, offersModel, destinationsModel, apiWithProvider);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, eventsModel, offersModel, destinationsModel);
 const infoPresenter = new InfoPresenter(siteMainElement, eventsModel);
 
@@ -72,14 +89,20 @@ addNewEventButton.addEventListener('click', (evt) => {
     handleSiteMenuClick(MenuItem.TABLE);
   }
   filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+
+  if (!isOnline()) {
+    toast(OfflineMessage.NEW_EVENT);
+    return;
+  }
+
   boardPresenter.createEvent(handleEventNewFormClose);
   addNewEventButton.disabled = true;
 });
 
 Promise.all([
-  api.getOffers(),
-  api.getDestinations(),
-  api.getEvents(),
+  apiWithProvider.getOffers(),
+  apiWithProvider.getDestinations(),
+  apiWithProvider.getEvents(),
 ]).then(([offers, destinations, events]) => {
   offersModel.setOffers(offers);
   destinationsModel.setDestinations(destinations);
@@ -99,3 +122,16 @@ Promise.all([
   });
 
 boardPresenter.init();
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
+
+window.addEventListener('online', () => {
+  document.title = document.title.replace(' [offline]', '');
+  apiWithProvider.sync();
+});
+
+window.addEventListener('offline', () => {
+  document.title += ' [offline]';
+});
