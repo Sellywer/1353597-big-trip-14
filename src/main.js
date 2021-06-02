@@ -19,7 +19,7 @@ import {toast} from './utils/toast.js';
 
 import Api from './api/api.js';
 
-const AUTHORIZATION = 'Basic Sellywer211405';
+const AUTHORIZATION = 'Basic Sellywer21140500206';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 const STORE_PREFIX = 'BigTrip-localstorage';
 const OFFERS_PREFIX = 'BigTrip-offers-localstorage';

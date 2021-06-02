@@ -36,20 +36,22 @@ export default class Provider {
 
   getOffers() {
     if (isOnline()) {
-      return this._api.getOffers().then((offers) => {
-        this._offersStore.setItems(offers);
-        return offers;
-      });
+      return this._api.getOffers()
+        .then((offers) => {
+          this._offersStore.setItems(offers);
+          return offers;
+        });
     }
     return Promise.resolve(this._offersStore.getItems());
   }
 
   getDestinations() {
     if (isOnline()) {
-      return this._api.getDestinations().then((destinations) => {
-        this._destinationsStore.setItems(destinations);
-        return destinations;
-      });
+      return this._api.getDestinations()
+        .then((destinations) => {
+          this._destinationsStore.setItems(destinations);
+          return destinations;
+        });
     }
     return Promise.resolve(this._destinationsStore.getItems());
   }
