@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {getRandomInteger} from './common';
 
-const MILLISECONDS = 1000;
+export const MILLISECONDS = 1000;
 const MAX_MONTHS_GAP = 6;
 const MIN_DAYS_GAP = -10;
 const MAX_DAYS_GAP = 7;
@@ -10,8 +10,10 @@ const DAYS = 30;
 const HOURS = 24;
 const MIN_MINUTES = 10;
 const MAX_MINUTES = 60;
-const MIN_TITLE_LENGTH = 3;
 const TEN_MINUTES = 10;
+const FIRST_POINT_INDEX = 0;
+const QUANTITY_POINT = 1;
+const MIN_TITLE_LENGTH = 3;
 
 export const getDuration = (dateFrom, dateTo) => {
   const startTime = new Date(dateFrom).getTime();
@@ -185,7 +187,7 @@ export const getRouteEventsTitle = (events) => {
   const lastEvent = routeTitle.slice([routeTitle.length - 1]);
 
   if (routeTitle.length > MIN_TITLE_LENGTH) {
-    return `${routeTitle.slice(0, MIN_TITLE_LENGTH - 1).join(' &mdash; ')}
+    return `${routeTitle.slice(FIRST_POINT_INDEX, QUANTITY_POINT).join(' &mdash; ')}
     &mdash; . . . &mdash; ${lastEvent.join(' &mdash; ')}`;
   }
   return routeTitle.join(' &mdash; ');

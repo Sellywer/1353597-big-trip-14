@@ -1,4 +1,4 @@
-import {createTotalPrice, getRouteEventsTitle, getAllTripDates} from '../utils/event.js';
+import {createTotalPrice, getAllTripDates, getRouteEventsTitle} from '../utils/event.js';
 import AbstractView from './abstract.js';
 
 const createInfoMainTemplate = (events) => {

@@ -65,10 +65,10 @@ const createPicturesContainer = (destination) => {
     `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
 
   return `<div class="event__photos-container">
-  <div class="event__photos-tape">
-  ${picturesList}
-  </div>
-</div>`;
+            <div class="event__photos-tape">
+              ${picturesList}
+            </div>
+          </div>`;
 };
 
 const createEventEditTemplate = (event, availableOffers, destinations) => {
@@ -270,7 +270,7 @@ export default class EditEvent extends SmartView  {
 
     this.updateData({
       offers: selectedOptions,
-    });
+    }, true);
   }
 
   _destinationChangeHandler(evt) {
@@ -304,7 +304,7 @@ export default class EditEvent extends SmartView  {
       type: currentType,
       options: currentOptions,
       offers: emptyOffers,
-    });
+    }, true);
   }
 
   _setDateFromPicker() {
@@ -345,13 +345,13 @@ export default class EditEvent extends SmartView  {
   _dateFromChangeHandler([userDate]) {
     this.updateData({
       dateFrom: userDate,
-    });
+    }, true);
   }
 
   _dateToChangeHandler([userDate]) {
     this.updateData({
       dateTo: userDate,
-    });
+    }, true);
   }
 
   _dateInputHandler(evt) {
@@ -361,12 +361,12 @@ export default class EditEvent extends SmartView  {
     if (evt.target.id === 'event-start-time-1') {
       this.updateData({
         dateFrom: dayjs(formatedData).toDate(),
-      });
+      }, true);
     }
     if (evt.target.id === 'event-end-time-1') {
       this.updateData({
         dateTo: dayjs(formatedData).toDate(),
-      });
+      }, true);
     }
   }
 
